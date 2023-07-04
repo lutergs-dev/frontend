@@ -56,7 +56,6 @@
 </script>
 
 <body>
-
     <Seo
             title="Intro"
             titleTemplate="%t% | LuterGS"
@@ -112,8 +111,8 @@
         </div>
 
     </UnstyledButton>
-
 </body>
+
 
 <style global>
     .circle1{
