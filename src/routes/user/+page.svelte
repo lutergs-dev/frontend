@@ -1,17 +1,9 @@
 <script lang="ts">
 
     import {getEnv} from "../env/envVarGetter";
-    import {Button, Group, Loader, Paper, Seo, Space, Text} from "@svelteuidev/core";
-    import { page } from '$app/stores';
+    import {Button, Group, Paper, Seo, Space, Text} from "@svelteuidev/core";
 
-    const loadPage = async() => {
-        return {
-            "token": $page.url.searchParams.get("token"),
-            "backendServer": await getEnv("BACKEND_SERVER")
-        }
-    }
-
-    let test = null;
+    let test = null
 
     const auth = async(api: string) => {
         const reqResult = await Promise.all(
@@ -25,14 +17,11 @@
         window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUrl}&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&access_type=online&state=${state}`
     }
 
-    const logout = async() => {
-        window.location.href = 'http://localhost:3000/user'
-    }
-
     let mail = null;
     let createdAt = null;
     const testUser = async(api: string) => {
-        const response = await fetch(`http://localhost:10000${api}`, {credentials: 'include'})
+        const backendServer = await getEnv("BACKEND_SERVER")
+        const response = await fetch(`${backendServer}${api}`, {credentials: 'include'})
         const responseCode = response.status;
         const json = await response.json()
         mail = `${json.email.username}@${json.email.provider}`;
