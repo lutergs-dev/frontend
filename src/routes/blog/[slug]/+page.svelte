@@ -1,9 +1,9 @@
 <script>
-    import {Alert, Group, Loader, Paper, Seo, Space, Stack, Text, Title} from "@svelteuidev/core";
+    import {Alert, Group, Loader, Paper, Seo, Space, Title} from "@svelteuidev/core";
     import {InfoCircled} from "radix-icons-svelte";
-    import TinyMceViewer from "../../../utils/tinyMce/TinyMceViewer.svelte";
-    import {getEnv} from "../../env/envVarGetter.ts";
-    import FloatingButton from "../../../utils/ui/FloatingButton.svelte";
+    import TinyMceViewer from "$lib/tinyMce/TinyMceViewer.svelte";
+    import FloatingButton from "$lib/ui/FloatingButton.svelte";
+    import {PUBLIC_BACKEND_SERVER} from "$env/static/public";
 
     /** @type {import('./$types').PageData} */
     export let data;
@@ -11,8 +11,7 @@
 
     // get page list from server
     const getPageData = async () => {
-        const backendServer = await getEnv("BACKEND_SERVER");
-        const result = await fetch(`${backendServer}/page/` + pageId)
+        const result = await fetch(`${PUBLIC_BACKEND_SERVER}/page/` + pageId)
             .then(result => result.json());
         pageName = result.name;
         pageParagraphs = result.paragraphs;

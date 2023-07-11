@@ -1,17 +1,16 @@
 <script lang="ts">
     import {Button, Group, Paper, Seo, Space, Text, TextInput} from "@svelteuidev/core";
-    import TinyMceViewer from "../../utils/tinyMce/TinyMceViewer.svelte";
-    import TinyMceEditor from "../../utils/tinyMce/TinyMceEditor.svelte";
-    import FloatingButton from "../../utils/ui/FloatingButton.svelte";
-    import {getEnv} from "../env/envVarGetter";
+    import TinyMceViewer from "$lib/tinyMce/TinyMceViewer.svelte";
+    import TinyMceEditor from "$lib/tinyMce/TinyMceEditor.svelte";
+    import FloatingButton from "$lib/ui/FloatingButton.svelte";
     import {Person, LockClosed} from "radix-icons-svelte";
-    import ClickablePaper from "../../utils/ui/ClickablePaper.svelte";
+    import ClickablePaper from "$lib/ui/ClickablePaper.svelte";
+    import {PUBLIC_BACKEND_SERVER} from "$env/static/public";
 
     const defaultPageSize = 10;
     let currentPage = 0;
     const loadPage = async () => {
-        const backendServer = await getEnv("BACKEND_SERVER")
-        fetch(`${backendServer}/guestbook?` + new URLSearchParams({
+        fetch(`${PUBLIC_BACKEND_SERVER}/guestbook?` + new URLSearchParams({
             index: currentPage,
             size: defaultPageSize
         })).then(result => result.json())
@@ -43,8 +42,7 @@
             return;
         }
 
-        const backendServer = await getEnv("BACKEND_SERVER")
-        const res = await fetch(`${backendServer}/guestbook`, {
+        const res = await fetch(`${PUBLIC_BACKEND_SERVER}/guestbook`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
@@ -70,8 +68,7 @@
         createdAt: string,
         deletePressed: boolean
     }) => {
-        const backendServer = await getEnv("BACKEND_SERVER")
-        const res = await fetch(`${backendServer}/guestbook`, {
+        const res = await fetch(`${PUBLIC_BACKEND_SERVER}/guestbook`, {
             method: "DELETE",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({

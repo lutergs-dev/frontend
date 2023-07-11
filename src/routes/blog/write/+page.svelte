@@ -1,11 +1,11 @@
 <script lang="ts">
     import {Button, Divider, Paper, Seo, Space, TextInput} from "@svelteuidev/core";
     import {useId} from "@svelteuidev/composables";
-    import TinyMceViewer from "../../../utils/tinyMce/TinyMceViewer.svelte";
-    import TinyMceEditor from "../../../utils/tinyMce/TinyMceEditor.svelte";
+    import TinyMceViewer from "$lib/tinyMce/TinyMceViewer.svelte";
+    import TinyMceEditor from "$lib/tinyMce/TinyMceEditor.svelte";
     import {Pencil1} from "radix-icons-svelte";
     import {browser} from "$app/environment";
-    import {getEnv} from "../../env/envVarGetter.ts";
+    import {PUBLIC_BACKEND_SERVER} from "$env/static/public";
 
     let title = '';
     let paragraphs: string[] = [];
@@ -24,8 +24,7 @@
 
     const saveArticle = async () => {
         const uuid = useId();
-        const backendServer = await getEnv("BACKEND_SERVER");
-        const result: {isSaved:boolean, data} = await fetch(`${backendServer}/page`, {
+        const result: {isSaved:boolean, data} = await fetch(`${PUBLIC_BACKEND_SERVER}/page`, {
             method: 'POST',
             headers: {"Content-Type": "Application/Json"},
             body: JSON.stringify({

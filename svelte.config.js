@@ -14,7 +14,7 @@ const config = {
 		adapter: adapter({
 			runtime: 'nodejs18.x',
 			regions: ["icn1"]
-		}),
+		})
 	}
 };
 

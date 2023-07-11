@@ -15,13 +15,12 @@
         Center
     } from '@svelteuidev/core';
     import {InfoCircled, Rocket} from 'radix-icons-svelte';
-    import {getEnv} from "../env/envVarGetter.ts";
-    import FloatingButton from "../../utils/ui/FloatingButton.svelte";
+    import FloatingButton from "$lib/ui/FloatingButton.svelte";
+    import {PUBLIC_BACKEND_SERVER} from "$env/static/public";
 
     // get page list from server
     const getPageList = async () => {
-        const backendServer = await getEnv("BACKEND_SERVER");
-        const response = await fetch(`${backendServer}/page/list`);
+        const response = await fetch(`${PUBLIC_BACKEND_SERVER}/page/list`);
         return await response.json();
     }
 

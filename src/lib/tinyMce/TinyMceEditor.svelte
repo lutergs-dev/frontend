@@ -2,11 +2,10 @@
     import Editor from "@tinymce/tinymce-svelte";
     import {Alert, Group, Loader} from "@svelteuidev/core";
     import {InfoCircled} from "radix-icons-svelte";
-    import {getEnv} from "../../routes/env/envVarGetter.ts";
+    import {PUBLIC_BACKEND_SERVER, PUBLIC_TINYMCE_APIKEY} from "$env/static/public";
 
     const getPresignedUrl = async (fileName: string) => {
-        const backendServer = await getEnv("BACKEND_SERVER");
-        return await fetch(`${backendServer}/image?` + new URLSearchParams({
+        return await fetch(`${PUBLIC_BACKEND_SERVER}/image?` + new URLSearchParams({
             name: fileName
         }), { method: "GET" })
             .then(result => result.json())
@@ -50,20 +49,20 @@
     export let value = '';
 </script>
 
-{#await getEnv("TINYMCE_APIKEY")}
-    <Group position="center">
-        <Loader variant="bars" />
-    </Group>
-{:then apiKey}
-    <Editor
-        {conf}
-        bind:value={value}
-        apiKey={apiKey}
-        images_upload_handler={uploadImage}
-    />
-{:catch err}
-    <Alert icon={InfoCircled} title="이런!">
-        <p>에디터를 불러오는 데 실패했습니다! lutergs@lutergs.dev 에게 문의해주세요.</p>
-        <p>err : {err}</p>
-    </Alert>
-{/await}
+<!--{#await getEnv("TINYMCE_APIKEY")}-->
+<!--    <Group position="center">-->
+<!--        <Loader variant="bars" />-->
+<!--    </Group>-->
+<!--{:then apiKey}-->
+<Editor
+    {conf}
+    bind:value={value}
+    apiKey={PUBLIC_TINYMCE_APIKEY}
+    images_upload_handler={uploadImage}
+/>
+<!--{:catch err}-->
+<!--    <Alert icon={InfoCircled} title="이런!">-->
+<!--        <p>에디터를 불러오는 데 실패했습니다! lutergs@lutergs.dev 에게 문의해주세요.</p>-->
+<!--        <p>err : {err}</p>-->
+<!--    </Alert>-->
+<!--{/await}-->

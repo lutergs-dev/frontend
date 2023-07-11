@@ -1,7 +1,7 @@
 <script lang='ts'>
     import {Grid, Paper, Code, Text, Space, Seo, Group} from '@svelteuidev/core';
     import {browser} from "$app/environment";
-    import ClickablePaper from "../../utils/ui/ClickablePaper.svelte";
+    import ClickablePaper from "$lib/ui/ClickablePaper.svelte";
 
     const movePage = (pageName: string) => {
         if (browser) { // to prevent error window is not defined, because it's SSR
