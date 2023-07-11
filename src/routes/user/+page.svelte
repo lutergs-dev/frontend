@@ -1,23 +1,7 @@
 <script lang="ts">
 
-    import {getEnv} from "../env/envVarGetter";
-    import {page} from "$app/stores";
-    import {
-        Alert,
-        Box,
-        Button,
-        Center,
-        Container,
-        Grid,
-        Group,
-        Loader, Modal, Notification,
-        Paper,
-        Seo,
-        Space,
-        Stack,
-        Text, TextInput
-    } from "@svelteuidev/core";
-    import {Cross2, InfoCircled} from "radix-icons-svelte";
+    import {Alert, Button, Container, Group, Loader, Modal, Paper, Seo, Space, Text, TextInput} from "@svelteuidev/core";
+    import {InfoCircled} from "radix-icons-svelte";
     import {PUBLIC_BACKEND_SERVER, PUBLIC_OAUTH_CLIENT_ID} from "$env/static/public";
     import FloatingButton from "$lib/ui/FloatingButton.svelte";
     import ClickablePaper from "$lib/ui/ClickablePaper.svelte";
