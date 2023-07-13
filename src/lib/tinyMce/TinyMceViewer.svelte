@@ -1,4 +1,10 @@
-<p><slot></slot></p>
+<body>
+    <p>
+        <slot>
+
+        </slot>
+    </p>
+</body>
 
 <style>
 

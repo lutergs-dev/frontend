@@ -14,7 +14,11 @@ const config = {
 		adapter: adapter({
 			runtime: 'nodejs18.x',
 			regions: ["icn1"]
-		})
+		}),
+		alias: {
+			'$util/*': 'src/lib/*',
+			"test": "src/test/test2"
+		}
 	}
 };
 

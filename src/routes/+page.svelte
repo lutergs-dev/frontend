@@ -2,7 +2,9 @@
     import {Seo, Space, Text, UnstyledButton} from "@svelteuidev/core";
     import {browser} from "$app/environment";
 
-    const mainButtonCss = {
+    let width, height;
+
+    const largeMainButtonCss = {
         display: "block",
         position: "fixed",
         width: "31rem",
@@ -17,7 +19,7 @@
         zIndex: '5'
     }
 
-    const mainLogoCss = {
+    const largeMainLogoCss = {
         display: "block",
         position: "absolute",
         width: "24rem",
@@ -30,7 +32,7 @@
         fontSize: "5.5rem"
     }
 
-    const subButtonCss = {
+    const largeSubButtonCss = {
         padding: "0rem",
         display: "block",
         position: "absolute",
@@ -42,6 +44,52 @@
         marginTop: "-2.5rem",
         right: "50%",
         marginRight: "-2.5rem",
+        border: "1px solid #CCC",
+        "&:hover": {
+            backgroundColor: "#F1F1F1"
+        }
+    }
+
+    const smallMainButtonCss = {
+        display: "block",
+        position: "fixed",
+        width: "20rem",
+        height: "20rem",
+        // background: "gray",
+        top: "50%",
+        marginTop: "-10.0rem",
+        right: "50%",
+        marginRight: "-10.0rem",
+        border: "1rem solid #CCC",
+        borderRadius: "50%",
+        zIndex: '5'
+    }
+
+    const smallMainLogoCss = {
+        display: "block",
+        position: "absolute",
+        width: "24rem",
+        height: "7rem",
+        top: "50%",
+        marginTop: "-1.4rem",
+        right: "50%",
+        marginRight: "-12rem",
+        zIndex: '10',
+        fontSize: "3rem"
+    }
+
+    const smallSubButtonCss = {
+        padding: "0rem",
+        display: "block",
+        position: "absolute",
+        backgroundColor: "white",
+        borderRadius: "50%",
+        width: "6rem",
+        height: "6rem",
+        top: "50%",
+        marginTop: "-3rem",
+        right: "50%",
+        marginRight: "-3rem",
         border: "1px solid #CCC",
         "&:hover": {
             backgroundColor: "#F1F1F1"
@@ -61,81 +109,139 @@
             titleTemplate="%t% | LuterGS"
     />
 
-    <UnstyledButton override={mainButtonCss}>
-        <Text override={mainLogoCss} align='center' variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }} class='title'>
-            LuterGS
-        </Text>
-
-        <div class="circle1">
-            <UnstyledButton override={subButtonCss} on:click={() => {movePage("about")}}>
-                <Text override={{fontSize: "1.2rem"}} align='center' variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }} class='title'>
-                    About
+    <div bind:clientWidth={width} bind:clientHeight={height}>
+        {#if width > 580}
+            <UnstyledButton override={largeMainButtonCss}>
+                <Text override={largeMainLogoCss} align='center' variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }} class='title'>
+                    LuterGS
                 </Text>
+
+                <div class="largeCircle1">
+                    <UnstyledButton override={largeSubButtonCss} on:click={() => {movePage("about")}}>
+                        <Text override={{fontSize: "1.2rem"}} align='center' variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }} class='title'>
+                            About
+                        </Text>
+                    </UnstyledButton>
+                </div>
+
+                <div class="largeCircle2">
+                    <UnstyledButton override={largeSubButtonCss} on:click={() => {movePage("blog")}}>
+                        <Text override={{fontSize: "1.2rem"}} align='center' variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>
+                            Blog
+                        </Text>
+                    </UnstyledButton>
+                </div>
+
+                <div class="largeCircle3">
+                    <UnstyledButton override={largeSubButtonCss} on:click={() => {movePage("eugene")}}>
+                        <Text override={{fontSize: "1.2rem"}} align='center' variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>
+                            Eugene
+                        </Text>
+                    </UnstyledButton>
+                </div>
+
+                <div class="largeCircle4">
+                    <UnstyledButton override={largeSubButtonCss} on:click={() => {movePage("user")}}>
+                        <Text override={{fontSize: "1.2rem"}} align='center' variant='gradient' weight='bold' lineClamp={2} gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>
+                            User
+                        </Text>
+                    </UnstyledButton>
+                </div>
+
+                <div class="largeCircle5">
+                    <UnstyledButton override={largeSubButtonCss} on:click={() => {movePage("guestbook")}}>
+                        <Text override={{fontSize: "1.2rem"}} align='center' variant='gradient' weight='bold' lineClamp={2} gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>
+                            Guest
+                        </Text>
+                        <Space override={{height: "0.2rem"}}/>
+                        <Text override={{fontSize: "1.2rem"}} align='center' variant='gradient' weight='bold' lineClamp={2} gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>
+                            Book
+                        </Text>
+                    </UnstyledButton>
+                </div>
+
             </UnstyledButton>
-        </div>
-
-        <div class="circle2">
-            <UnstyledButton override={subButtonCss} on:click={() => {movePage("blog")}}>
-                <Text override={{fontSize: "1.2rem"}} align='center' variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>
-                    Blog
+        {:else}
+            <UnstyledButton override={smallMainButtonCss}>
+                <Text override={smallMainLogoCss} align='center' variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }} class='title'>
+                    LuterGS
                 </Text>
+
+                <div class="smallCircle1">
+                    <UnstyledButton override={smallSubButtonCss} on:click={() => {movePage("about")}}>
+                        <Text override={{fontSize: "1.2rem"}} align='center' variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }} class='title'>
+                            About
+                        </Text>
+                    </UnstyledButton>
+                </div>
+
+                <div class="smallCircle2">
+                    <UnstyledButton override={smallSubButtonCss} on:click={() => {movePage("blog")}}>
+                        <Text override={{fontSize: "1.2rem"}} align='center' variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>
+                            Blog
+                        </Text>
+                    </UnstyledButton>
+                </div>
+
+                <div class="smallCircle3">
+                    <UnstyledButton override={smallSubButtonCss} on:click={() => {movePage("eugene")}}>
+                        <Text override={{fontSize: "1.2rem"}} align='center' variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>
+                            Eugene
+                        </Text>
+                    </UnstyledButton>
+                </div>
+
+                <div class="smallCircle4">
+                    <UnstyledButton override={smallSubButtonCss} on:click={() => {movePage("user")}}>
+                        <Text override={{fontSize: "1.2rem"}} align='center' variant='gradient' weight='bold' lineClamp={2} gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>
+                            User
+                        </Text>
+                    </UnstyledButton>
+                </div>
+
+                <div class="smallCircle5">
+                    <UnstyledButton override={smallSubButtonCss} on:click={() => {movePage("guestbook")}}>
+                        <Text override={{fontSize: "1.2rem"}} align='center' variant='gradient' weight='bold' lineClamp={2} gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>
+                            Guest
+                        </Text>
+                        <Space override={{height: "0.2rem"}}/>
+                        <Text override={{fontSize: "1.2rem"}} align='center' variant='gradient' weight='bold' lineClamp={2} gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>
+                            Book
+                        </Text>
+                    </UnstyledButton>
+                </div>
+
             </UnstyledButton>
-        </div>
+        {/if}
+    </div>
 
-        <div class="circle3">
-            <UnstyledButton override={subButtonCss} on:click={() => {movePage("eugene")}}>
-                <Text override={{fontSize: "1.2rem"}} align='center' variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>
-                    Eugene
-                </Text>
-            </UnstyledButton>
-        </div>
 
-        <div class="circle4">
-            <UnstyledButton override={subButtonCss} on:click={() => {movePage("user")}}>
-                <Text override={{fontSize: "1.2rem"}} align='center' variant='gradient' weight='bold' lineClamp={2} gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>
-                    User
-                </Text>
-            </UnstyledButton>
-        </div>
 
-        <div class="circle5">
-            <UnstyledButton override={subButtonCss} on:click={() => {movePage("guestbook")}}>
-                <Text override={{fontSize: "1.2rem"}} align='center' variant='gradient' weight='bold' lineClamp={2} gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>
-                    Guest
-                </Text>
-                <Space override={{height: "0.2rem"}}/>
-                <Text override={{fontSize: "1.2rem"}} align='center' variant='gradient' weight='bold' lineClamp={2} gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>
-                    Book
-                </Text>
-            </UnstyledButton>
-        </div>
-
-    </UnstyledButton>
 </body>
 
 
 <style global>
-    .circle1{
-        animation: rotate1 1s ease-out 0s 1 normal forwards;
+    .largeCircle1{
+        animation: largeRotate1 1s ease-out 0s 1 normal forwards;
     }
 
-    .circle2{
-        animation: rotate2 1s ease-out 0s 1 normal forwards;
+    .largeCircle2{
+        animation: largeRotate2 1s ease-out 0s 1 normal forwards;
     }
 
-    .circle3{
-        animation: rotate3 1s ease-out 0s 1 normal forwards;
+    .largeCircle3{
+        animation: largeRotate3 1s ease-out 0s 1 normal forwards;
     }
 
-    .circle4{
-        animation: rotate4 1s ease-out 0s 1 normal forwards;
+    .largeCircle4{
+        animation: largeRotate4 1s ease-out 0s 1 normal forwards;
     }
 
-    .circle5{
-        animation: rotate5 1s ease-out 0s 1 normal forwards;
+    .largeCircle5{
+        animation: largeRotate5 1s ease-out 0s 1 normal forwards;
     }
 
-    @keyframes rotate1{
+    @keyframes largeRotate1{
         0%{
             transform:rotate(90deg)
             translate(-15rem)
@@ -148,7 +254,7 @@
         }
     }
 
-    @keyframes rotate2{
+    @keyframes largeRotate2{
         0%{
             transform:rotate(90deg)
             translate(-15rem)
@@ -161,7 +267,7 @@
         }
     }
 
-    @keyframes rotate3{
+    @keyframes largeRotate3{
         0%{
             transform:rotate(90deg)
             translate(-15rem)
@@ -174,7 +280,7 @@
         }
     }
 
-    @keyframes rotate4{
+    @keyframes largeRotate4{
         0%{
             transform:rotate(90deg)
             translate(-15rem)
@@ -187,7 +293,7 @@
         }
     }
 
-    @keyframes rotate5{
+    @keyframes largeRotate5{
         0%{
             transform:rotate(90deg)
             translate(-15rem)
@@ -196,6 +302,95 @@
         100%{
             transform:rotate(378deg)
             translate(-15rem)
+            rotate(-378deg);
+        }
+    }
+
+
+
+
+
+    .smallCircle1{
+        animation: smallRotate1 1s ease-out 0s 1 normal forwards;
+    }
+
+    .smallCircle2{
+        animation: smallRotate2 1s ease-out 0s 1 normal forwards;
+    }
+
+    .smallCircle3{
+        animation: smallRotate3 1s ease-out 0s 1 normal forwards;
+    }
+
+    .smallCircle4{
+        animation: smallRotate4 1s ease-out 0s 1 normal forwards;
+    }
+
+    .smallCircle5{
+        animation: smallRotate5 1s ease-out 0s 1 normal forwards;
+    }
+
+    @keyframes smallRotate1{
+        0%{
+            transform:rotate(90deg)
+            translate(-9rem)
+            rotate(-90deg);
+        }
+        100%{
+            transform:rotate(90deg)
+            translate(-9rem)
+            rotate(-90deg);
+        }
+    }
+
+    @keyframes smallRotate2{
+        0%{
+            transform:rotate(90deg)
+            translate(-9rem)
+            rotate(-90deg);
+        }
+        100%{
+            transform:rotate(162deg)
+            translate(-9rem)
+            rotate(-162deg);
+        }
+    }
+
+    @keyframes smallRotate3{
+        0%{
+            transform:rotate(90deg)
+            translate(-9rem)
+            rotate(-90deg);
+        }
+        100%{
+            transform:rotate(234deg)
+            translate(-9rem)
+            rotate(-234deg);
+        }
+    }
+
+    @keyframes smallRotate4{
+        0%{
+            transform:rotate(90deg)
+            translate(-9rem)
+            rotate(-90deg);
+        }
+        100%{
+            transform:rotate(306deg)
+            translate(-9rem)
+            rotate(-306deg);
+        }
+    }
+
+    @keyframes smallRotate5{
+        0%{
+            transform:rotate(90deg)
+            translate(-9rem)
+            rotate(-90deg);
+        }
+        100%{
+            transform:rotate(378deg)
+            translate(-9rem)
             rotate(-378deg);
         }
     }

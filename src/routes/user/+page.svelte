@@ -47,20 +47,17 @@
                 // close modal (refresh page)
                 window.location.reload();
             } else {
+                errorOccured = true
                 if (result.status === 406) {            // 닉네임 형식이 잘못되었거나 사용중임
-
-                    errorOccured = true
                     result.json().then(json => {errorMessage = json.error});
-                    console.log(errorMessage);
                 } else if (result.status === 401) {     // 토큰 해독 실패
-
                     errorMessage = "유저 정보 해독에 실패했습니다. 로그아웃 후 재로그인해 주세요.";
                 } else if (result.status === 403) {     // 토큰은 정상이나 유저를 찾을 수 없음
-
+                    errorMessage = "유저를 찾을 수 없습니다. 올바르지 않은 접근입니다."
                 } else if (result.status === 404) {     // 기타 에러 발생
-
+                    result.json().then(json => {errorMessage = `알 수 없는 에러가 발생했습니다 : ${json.error}`});
                 } else {                                // 백엔드에서 처리하지 못한 에러 발생
-
+                    result.json().then(json => {errorMessage = `알 수 없는 에러가 발생했습니다 : ${json.error}`});
                 }
             }
         })
@@ -71,7 +68,6 @@
         errorOccured = false;
         errorMessage = ''
     }
-
 
     const googleAuth = async(api: string) => {
         const clientId = encodeURI(PUBLIC_OAUTH_CLIENT_ID);
@@ -91,6 +87,9 @@
                 }
             })
     }
+
+
+    let isDeleteAccountModalOpened = false;
 
 
 </script>
@@ -122,7 +121,7 @@
             {#if response.status === 200}           <!-- get user success -->
                 {setUserInfo(response) || ""}
                 <Group direction="column">
-                    <Container override={{ px: 0, backgroundColor: "#CBE0D2FF", width: "20rem", height: "3rem", display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
+                    <Container override={{ px: 0, width: "20rem", height: "3rem", display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
                         <Group position="apart" override={{ width: "20rem" }}>
                             <Modal opened={changeNickNameOpened} withCloseButton={false} title="닉네임 변경">
                                 <TextInput placeholder="변경할 닉네임 입력" bind:value={newNickName}></TextInput>
@@ -142,16 +141,25 @@
                                     <Alert icon={InfoCircled}>{errorMessage}</Alert>
                                 {/if}
                             </Modal>
-                            <Text override={{fontSize: '1rem'}} variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>닉네임 : {userInfo.nickName}</Text>
+                            <Text override={{fontSize: '1rem'}} variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>닉네임 : {userInfo.nickName.value}</Text>
                             <Button variant='gradient' gradient={{ from: 'dark', to: 'cyan', deg: 45 }} on:click={() => {changeNickNameOpened = true; console.log(changeNickNameOpened)}}>변경</Button>
                         </Group>
                     </Container>
-                    <Container override={{ px: 0, backgroundColor: "#CBE0D2FF", width: "20rem", height: "3rem", display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
+                    <Container override={{ px: 0, width: "20rem", height: "3rem", display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
                         <Text override={{fontSize: '1rem'}} variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>이메일 : {userInfo.email}</Text>
                     </Container>
-                    <Container override={{ px: 0, backgroundColor: "#CBE0D2FF", width: "20rem", height: "3rem", display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
+                    <Container override={{ px: 0, width: "20rem", height: "3rem", display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
                         <Text override={{fontSize: '1rem'}} variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>가입일자 : {userInfo.createdAt}</Text>
                     </Container>
+                    <!-- TODO : 회원 탈퇴 기능 만들어야 함 -->
+<!--                    <Container >-->
+<!--                        <Group position="center">-->
+<!--                            <Modal opened={isDeleteAccountModalOpened} withCloseButton={false} title="회원 탈퇴">-->
+<!--                                <Text>회원 탈퇴 후 재가입은 가능합니다. 다만, 작성했던 글은 </Text>-->
+<!--                            </Modal>-->
+<!--                            <Button color="red">회원 탈퇴</Button>-->
+<!--                        </Group>-->
+<!--                    </Container>-->
                 </Group>
                 {:else if response.status === 400}
                 {#await getErrMsgFromResponse(response)}
@@ -175,8 +183,8 @@
             {:else if response.status === 404}      <!-- no token (logout) -->
                 <Group position="center" direction="column">
                     <Text>계정 정보가 없습니다. 아래 버튼을 눌러 구글로 로그인 혹은 회원가입 해 주세요.</Text>
-                    <Text>회원가입할 경우, 최초 닉네임은 구글 이메일의 ID 와 동일합니다. 변경을 권장드립니다.</Text>
-                    <Text>lutergs.dev 는 가입하는 유저의 "이메일" 만 저장합니다.</Text>
+                    <Text>회원가입할 경우, 최초 닉네임은 랜덤으로 생성됩니다. 변경을 권장드립니다.</Text>
+                    <Text>lutergs.dev 는 가입하는 유저의 "이메일" 과, 유저가 설정한 닉네임만 저장합니다.</Text>
                     <img
                         src="/btn_google_signin_light_normal_web.png"
                         onmouseover="this.src='/btn_google_signin_light_pressed_web.png';"

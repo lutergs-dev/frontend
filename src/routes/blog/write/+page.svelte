@@ -1,8 +1,7 @@
 <script lang="ts">
     import {Button, Divider, Paper, Seo, Space, TextInput} from "@svelteuidev/core";
-    import {useId} from "@svelteuidev/composables";
-    import TinyMceViewer from "$lib/tinyMce/TinyMceViewer.svelte";
-    import TinyMceEditor from "$lib/tinyMce/TinyMceEditor.svelte";
+    import TinyMceViewer from "../../../lib/tinyMce/TinyMceViewer.svelte";
+    import TinyMceEditor from "../../../lib/tinyMce/TinyMceEditor.svelte";
     import {Pencil1} from "radix-icons-svelte";
     import {browser} from "$app/environment";
     import {PUBLIC_BACKEND_SERVER} from "$env/static/public";
@@ -23,36 +22,37 @@
     }
 
     const saveArticle = async () => {
-        const uuid = useId();
-        const result: {isSaved:boolean, data} = await fetch(`${PUBLIC_BACKEND_SERVER}/page`, {
+        console.log(JSON.stringify({
+            title: title,
+            paragraphs: paragraphs
+        }));
+        const response = await fetch(`${PUBLIC_BACKEND_SERVER}/page`, {
             method: 'POST',
+            credentials: 'include',
             headers: {"Content-Type": "Application/Json"},
             body: JSON.stringify({
-                title: {
-                    id: uuid,
-                    name: title
-                },
+                title: title,
                 paragraphs: paragraphs
             })
-        }).then(result => result.json())
-        .then(jsonResult => {
-            return {
-                isSaved: true,
-                data: jsonResult
-            }
-        })
-        .catch(err => {
-            return {
-                isSaved: false,
-                data: err
-            }
-        })
+        });
+        const json = await response.json();
+        const result = {
+            isSuccess: false,
+            link: null,
+            error: null
+        }
+        if (response.status === 200) {
+            result.isSuccess = true
+            result.link = json.pageKey.endpoint.value;
+        } else {
+            result.error = json.error;
+        }
         if (browser) {
-            if (result.isSaved) {
-                alert("저장이 완료되었습니다! 확인을 누르면 저장한 글로 이동합니다.");
-                window.location.href = `/blog/${uuid}`;
+            if (result.isSuccess) {
+                alert(`저장이 완료되었습니다! 확인을 누르면 저장한 글로 이동합니다.`);
+                window.location.href = `/blog/${result.link}`;
             } else {
-                alert(`저장에 실패했습니다!\nerr : ${result.data}`);
+                alert(`저장에 실패했습니다!\nerr : ${result.error}`);
             }
         }
     }
@@ -88,10 +88,10 @@
     <Paper>
         <svelte:component this={TinyMceEditor} bind:value={bindValue}></svelte:component>
         <Space h="md"/>
-        <Button align="right" on:click={addParagraph}>단락 저장</Button>
+        <Button align="right" on:click={() => {addParagraph()}}>단락 저장</Button>
     </Paper>
     <Space h="md"/>
     <Paper>
-        <Button align="right" on:click={saveArticle}>글 저장</Button>
+        <Button align="right" on:click={() => {saveArticle()}}>글 저장</Button>
     </Paper>
 </main>
