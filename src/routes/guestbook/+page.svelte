@@ -144,7 +144,7 @@
                             확인
                         </Button>
                     {:else}
-                        <Button compact variant='gradient' gradient={{ from: 'dark', to: 'orange', deg: 45 }}
+                        <Button compact variant='gradient' gradient={{ from: 'red', to: 'gray', deg: 45 }}
                                 on:click={() => {comment.deletePressed = true}}>
                             삭제
                         </Button>

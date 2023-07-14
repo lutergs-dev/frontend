@@ -10,8 +10,9 @@ export const load = async({ params }) => {
             isReceived: true,
             pageKey: {
                 title: body.pageKey.title,
-                endpoint: body.pageKey.endpoint,
-                nickname: body.pageKey.nickName
+                endpoint: body.pageKey.endpoint.value,
+                nickname: body.pageKey.nickName.value,
+                createdAt: body.pageKey.createdAt
             },
             pageValue: {
                 paragraphs: body.pageValue.paragraphs

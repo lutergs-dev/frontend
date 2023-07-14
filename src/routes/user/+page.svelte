@@ -5,28 +5,10 @@
     import {PUBLIC_BACKEND_SERVER, PUBLIC_OAUTH_CLIENT_ID} from "$env/static/public";
     import FloatingButton from "$lib/ui/FloatingButton.svelte";
     import ClickablePaper from "$lib/ui/ClickablePaper.svelte";
+    import {UserResponse, Email, Status} from "$lib/auth/Auth";
 
-    const userInfo = {
-        email: "",
-        createdAt: "",
-        nickName: ""
-    }
-    const getUserInfo = async() => {
-        return await fetch(`${PUBLIC_BACKEND_SERVER}/user`, {credentials: 'include'})
-    }
-
-    const getErrMsgFromResponse = async(response: Response) => {
-        return (await response.json()).error
-    }
-
-    const setUserInfo = (response: Response) => {
-        response.json()
-            .then(json => {
-                userInfo.email = `${json.email.username}@${json.email.provider}`;
-                userInfo.createdAt = json.createdAt;
-                userInfo.nickName = json.nickName;
-            })
-    }
+    export let data;
+    let userResponse: UserResponse = data.data;
 
     let newNickName = '';
     let isValidNickname: boolean;
@@ -44,7 +26,7 @@
             })
         }).then(result => {
             if (result.status === 200) {        // 정상 동작
-                // close modal (refresh page)
+                // close modal (refresh page) TODO : need to use goto()
                 window.location.reload();
             } else {
                 errorOccured = true
@@ -87,11 +69,6 @@
                 }
             })
     }
-
-
-    let isDeleteAccountModalOpened = false;
-
-
 </script>
 
 
@@ -102,6 +79,25 @@
         titleTemplate="%t% | LuterGS"
     />
 
+    <!-- Modals -->
+    <Modal opened={changeNickNameOpened} withCloseButton={false} title="닉네임 변경">
+        <TextInput placeholder="변경할 닉네임 입력" bind:value={newNickName}></TextInput>
+        <Space h="md"/>
+        <Text>* 영어 소문자, 숫자, 대시(-), 밑줄(_), 아포스트로피('), 마침표(.) 만 허용됩니다.</Text>
+        <Space h="md"/>
+        <Group position="apart">
+            {#if isValidNickname === true}
+                <Button variant='gradient' gradient={{ from: 'dark', to: 'cyan', deg: 45 }} on:click={() => {setNickName()}}>변경</Button>
+            {:else}
+                <Button disabled={true} variant='gradient' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>형식이 맞지 않습니다</Button>
+            {/if}
+            <Button variant='outline' outline={{ from: 'dark', to: 'cyan', deg: 45 }} on:click={() => {resetModal()}}>닫기</Button>
+        </Group>
+        {#if errorOccured === true}
+            <Space h="md"/>
+            <Alert icon={InfoCircled}>{errorMessage}</Alert>
+        {/if}
+    </Modal>
 
     <!-- 제목 -->
     <Paper>
@@ -113,88 +109,67 @@
     <Space h="md"></Space>
 
     <Paper>
-        {#await getUserInfo()}
-                <Group position="center">
-                    <Loader variant="bars" />
-                </Group>
-        {:then response}
-            {#if response.status === 200}           <!-- get user success -->
-                {setUserInfo(response) || ""}
-                <Group direction="column">
-                    <Container override={{ px: 0, width: "20rem", height: "3rem", display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
-                        <Group position="apart" override={{ width: "20rem" }}>
-                            <Modal opened={changeNickNameOpened} withCloseButton={false} title="닉네임 변경">
-                                <TextInput placeholder="변경할 닉네임 입력" bind:value={newNickName}></TextInput>
-                                <Space h="md"/>
-                                <Text>* 영어 소문자, 숫자, 대시(-), 밑줄(_), 아포스트로피('), 마침표(.) 만 허용됩니다.</Text>
-                                <Space h="md"/>
-                                <Group position="apart">
-                                    {#if isValidNickname === true}
-                                        <Button variant='gradient' gradient={{ from: 'dark', to: 'cyan', deg: 45 }} on:click={() => {setNickName()}}>변경</Button>
-                                    {:else}
-                                        <Button disabled={true} variant='gradient' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>형식이 맞지 않습니다</Button>
-                                    {/if}
-                                    <Button variant='outline' outline={{ from: 'dark', to: 'cyan', deg: 45 }} on:click={() => {resetModal()}}>닫기</Button>
-                                </Group>
-                                {#if errorOccured === true}
-                                    <Space h="md"/>
-                                    <Alert icon={InfoCircled}>{errorMessage}</Alert>
-                                {/if}
-                            </Modal>
-                            <Text override={{fontSize: '1rem'}} variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>닉네임 : {userInfo.nickName.value}</Text>
-                            <Button variant='gradient' gradient={{ from: 'dark', to: 'cyan', deg: 45 }} on:click={() => {changeNickNameOpened = true; console.log(changeNickNameOpened)}}>변경</Button>
-                        </Group>
-                    </Container>
-                    <Container override={{ px: 0, width: "20rem", height: "3rem", display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
-                        <Text override={{fontSize: '1rem'}} variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>이메일 : {userInfo.email}</Text>
-                    </Container>
-                    <Container override={{ px: 0, width: "20rem", height: "3rem", display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
-                        <Text override={{fontSize: '1rem'}} variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>가입일자 : {userInfo.createdAt}</Text>
-                    </Container>
-                    <!-- TODO : 회원 탈퇴 기능 만들어야 함 -->
-<!--                    <Container >-->
-<!--                        <Group position="center">-->
-<!--                            <Modal opened={isDeleteAccountModalOpened} withCloseButton={false} title="회원 탈퇴">-->
-<!--                                <Text>회원 탈퇴 후 재가입은 가능합니다. 다만, 작성했던 글은 </Text>-->
-<!--                            </Modal>-->
-<!--                            <Button color="red">회원 탈퇴</Button>-->
-<!--                        </Group>-->
-<!--                    </Container>-->
-                </Group>
-                {:else if response.status === 400}
-                {#await getErrMsgFromResponse(response)}
-                    <Group position="center">       <!-- unknown error -->
-                        <Loader variant="bars" />
+        {#if userResponse.status === Status.Normal}
+            <Group direction="column">
+                <Container override={{ px: 0, width: "20rem", height: "3rem", display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
+                    <Group position="apart" override={{ width: "20rem" }}>
+                        <Text override={{fontSize: '1rem'}} variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>닉네임 : {userResponse.userInfo.nickname}</Text>
+                        <Button variant='gradient' gradient={{ from: 'dark', to: 'cyan', deg: 45 }} on:click={() => {changeNickNameOpened = true; console.log(changeNickNameOpened)}}>변경</Button>
                     </Group>
-                {:then errMessage}
-                    <Alert icon={InfoCircled} title="Unknown error" color="red">
-                        <p>알 수 없는 에러가 발생했습니다. lutergs@lutergs.dev 에게 문의해주세요.</p>
-                        <p>err={errMessage}</p>
-                    </Alert>
-                {/await}
-            {:else if response.status === 401}      <!-- JSON decryption failed -->
-                <Alert icon={InfoCircled} title="Token Validation Failed!" color="red">
-                    유저 정보 해독에 실패했습니다. 로그아웃 후 재로그인해 주세요. 문제가 지속될 경우, lutergs@lutergs.dev 에게 문의해주세요.
-                </Alert>
-            {:else if response.status === 403}      <!-- user not found -->
-                <Alert icon={InfoCircled} title="Token Validation Failed!" color="red">
-                    유저가 존재하지 않습니다. 문제가 지속될 경우, lutergs@lutergs.dev 에게 문의해주세요.
-                </Alert>
-            {:else if response.status === 404}      <!-- no token (logout) -->
-                <Group position="center" direction="column">
-                    <Text>계정 정보가 없습니다. 아래 버튼을 눌러 구글로 로그인 혹은 회원가입 해 주세요.</Text>
-                    <Text>회원가입할 경우, 최초 닉네임은 랜덤으로 생성됩니다. 변경을 권장드립니다.</Text>
-                    <Text>lutergs.dev 는 가입하는 유저의 "이메일" 과, 유저가 설정한 닉네임만 저장합니다.</Text>
-                    <img
+                </Container>
+                <Container override={{ px: 0, width: "20rem", height: "3rem", display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
+                    <Text override={{fontSize: '1rem'}} variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>이메일 : {Email.toPlainString(userResponse.userInfo.email)}</Text>
+                </Container>
+                <Container override={{ px: 0, width: "20rem", height: "3rem", display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
+                    <Text override={{fontSize: '1rem'}} variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>가입일자 : {userResponse.userInfo.createdAt}</Text>
+                </Container>
+                <!-- TODO : 회원 탈퇴 기능 만들어야 함 -->
+                <!--                    <Container >-->
+                <!--                        <Group position="center">-->
+                <!--                            <Modal opened={isDeleteAccountModalOpened} withCloseButton={false} title="회원 탈퇴">-->
+                <!--                                <Text>회원 탈퇴 후 재가입은 가능합니다. 다만, 작성했던 글은 </Text>-->
+                <!--                            </Modal>-->
+                <!--                            <Button color="red">회원 탈퇴</Button>-->
+                <!--                        </Group>-->
+                <!--                    </Container>-->
+            </Group>
+        {:else if userResponse.status === Status.NoCredential}
+            <Group position="center" direction="column">
+                <Text>계정 정보가 없습니다. 아래 버튼을 눌러 구글로 로그인 혹은 회원가입 해 주세요.</Text>
+                <Text>회원가입할 경우, 최초 닉네임은 랜덤으로 생성됩니다. 변경을 권장드립니다.</Text>
+                <Text>lutergs.dev 는 가입하는 유저의 "이메일" 과, 유저가 설정한 닉네임만 저장합니다.</Text>
+                <img
                         src="/btn_google_signin_light_normal_web.png"
                         onmouseover="this.src='/btn_google_signin_light_pressed_web.png';"
                         onmouseout="this.src='/btn_google_signin_light_normal_web.png';"
                         on:click={() => googleAuth("/user/signup")}
                         alt="google-login-image"
-                    />
-                </Group>
-            {/if}
-        {/await}
+                />
+            </Group>
+        {:else if userResponse.status === Status.DecryptError}
+            <Alert icon={InfoCircled} title="Token Validation Failed!" color="red">
+                유저 정보 해독에 실패했습니다. 로그아웃 후 재로그인해 주세요. 문제가 지속될 경우, lutergs@lutergs.dev 에게 문의해주세요.
+            </Alert>
+        {:else if userResponse.status === Status.NotExists}
+            <Alert icon={InfoCircled} title="Token Validation Failed!" color="red">
+                유저가 존재하지 않습니다. 문제가 지속될 경우, lutergs@lutergs.dev 에게 문의해주세요.
+            </Alert>
+        {:else if userResponse.status === Status.BackendServerError}
+            <Alert icon={InfoCircled} title="Unknown error" color="red">
+                <p>알 수 없는 에러가 발생했습니다. lutergs@lutergs.dev 에게 문의해주세요.</p>
+                <p>err={userResponse.statusMessage}</p>
+            </Alert>
+        {:else if userResponse.status === Status.UnknownError}
+            <Alert icon={InfoCircled} title="Unknown error" color="red">
+                <p>알 수 없는 에러가 발생했습니다. lutergs@lutergs.dev 에게 문의해주세요.</p>
+                <p>err={userResponse.statusMessage}</p>
+            </Alert>
+        {:else}
+            <Alert icon={InfoCircled} title="Unknown error" color="red">
+                <p>알 수 없는 에러가 발생했습니다. lutergs@lutergs.dev 에게 문의해주세요.</p>
+                <p>err={userResponse.statusMessage}</p>
+            </Alert>
+        {/if}
     </Paper>
 
     <FloatingButton backlink={''}>

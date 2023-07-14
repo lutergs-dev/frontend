@@ -1,7 +1,5 @@
 <script lang="ts">
     import Editor from "@tinymce/tinymce-svelte";
-    import {Alert, Group, Loader} from "@svelteuidev/core";
-    import {InfoCircled} from "radix-icons-svelte";
     import {PUBLIC_BACKEND_SERVER, PUBLIC_TINYMCE_APIKEY} from "$env/static/public";
 
     const getPresignedUrl = async (fileName: string) => {
@@ -11,6 +9,13 @@
             .then(result => result.json())
             .then(jsonResult => jsonResult.url)
     }
+
+    const test2 = (blobInfo, progress) => new Promise((resolve, reject) => {
+
+        fetch(`${PUBLIC_BACKEND_SERVER}/`)
+
+        blobInfo.fileName()
+    })
 
     const uploadImage = (blobInfo, progress) => new Promise((resolve, reject) => {
         progress(50);
