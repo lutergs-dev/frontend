@@ -1,7 +1,7 @@
 <script lang="ts">
     import TinyMceViewer from "../../lib/tinyMce/TinyMceViewer.svelte";
     import {Paper} from "@svelteuidev/core";
-    import FloatingButton from "../../lib/ui/FloatingButton.svelte";
+    import FloatingButton from "$lib/ui/floatingButton/FloatingButton.svelte";
 </script>
 
 <Paper>

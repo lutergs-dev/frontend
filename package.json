@@ -3,8 +3,9 @@
 	"version": "0.0.3",
 	"private": true,
 	"scripts": {
+		"dev local": "vite dev --port=5173 --host",
 		"dev": "vite dev",
-		"dev build": "vite build && vite preview --port=5173 --host",
+		"dev preview": "vite build && vite preview --port=5173 --host",
 		"build": "vite build",
 		"preview": "vite preview",
 		"test": "npm run test:integration && npm run test:unit",

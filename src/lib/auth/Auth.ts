@@ -1,4 +1,6 @@
 import {PUBLIC_BACKEND_SERVER} from "$env/static/public";
+import {writable} from "svelte/store";
+import {browser} from "$app/environment";
 
 export class Email {
     readonly username: string;
@@ -30,34 +32,39 @@ export enum Status {
     DecryptError,
     NotExists,
     BackendServerError,
-    UnknownError
+    UnknownError,
+    NotInitiated
 }
 
 export class UserResponse {
     readonly status: Status;
     readonly statusMessage: string;
     readonly userInfo?: UserInfo;
-    constructor(response: Response, json: any) {
-        if (response.status === 200){
+    constructor(response?: Response, json?: any) {
+        if (response?.status === 200){
             this.status = Status.Normal;
             this.statusMessage = "정상";
             this.userInfo = new UserInfo(json);
-        } else if (response.status === 400) {
+        } else if (response?.status === 400) {
             this.status = Status.BackendServerError;
             this.statusMessage = json.error;
-        } else if (response.status === 401) {
+        } else if (response?.status === 401) {
             this.status = Status.DecryptError;
             this.statusMessage = "token validation error";
-        } else if (response.status === 403) {
+        } else if (response?.status === 403) {
             this.status = Status.NotExists;
             this.statusMessage = "user not exists";
-        } else if (response.status === 404) {
+        } else if (response?.status === 404) {
             this.status = Status.NoCredential;
             this.statusMessage = "no credential info";
+        } else if (response === undefined) {
+            this.status = Status.NoCredential;
+            this.statusMessage = "initiated";
         } else {
             this.status = Status.UnknownError;
             this.statusMessage = "unknown error!";
         }
+        console.log(response, this.status, this.statusMessage);
     }
 }
 export const getUserInfo = async() => {
@@ -70,3 +77,33 @@ export const getUserInfo = async() => {
     }
     return new UserResponse(response, resJson);
 }
+
+const getNewUserInfo = async() => {
+    if (browser) {
+        const localData = localStorage.getItem("userStore");
+        if (localData == null) return await getUserInfo();
+        else return JSON.parse(localData) as UserResponse;
+    } else {
+        return await getUserInfo();
+    }
+}
+
+const UserStore = async() => {
+    const res = await getNewUserInfo();
+    if (browser) {
+        localStorage.setItem("userStore", JSON.stringify(res));
+    }
+    const { subscribe, set } = writable(res);
+    return {
+        subscribe,
+        refresh: () => {
+            getUserInfo().then(result => {
+                if (browser) {
+                    localStorage.setItem("userStore", JSON.stringify(result));
+                }
+                set(result);
+            })
+        }
+    }
+}
+export const userStore = await UserStore();

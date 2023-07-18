@@ -1,5 +1,5 @@
 <script>
-    import FloatingButton from "$lib/ui/FloatingButton.svelte";
+    import FloatingButton from "$lib/ui/floatingButton/FloatingButton.svelte";
     import {Text} from "@svelteuidev/core";
 </script>
 

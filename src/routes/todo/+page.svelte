@@ -2,7 +2,7 @@
 <script lang="ts">
     import Center from './assets/Header.svelte';
     import TodolistManager from "./assets/TodolistManager.svelte";
-    import FloatingButton from "$lib/ui/FloatingButton.svelte";
+    import FloatingButton from "$lib/ui/floatingButton/FloatingButton.svelte";
 
     TodolistManager.inputTextField = 'test2';
 

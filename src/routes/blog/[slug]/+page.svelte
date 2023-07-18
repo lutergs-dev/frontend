@@ -2,7 +2,7 @@
     import {Alert, Box, Group, Paper, Seo, Space, Stack, Text, Title} from "@svelteuidev/core";
     import {InfoCircled} from "radix-icons-svelte";
     import TinyMceViewer from "$lib/tinyMce/TinyMceViewer.svelte";
-    import FloatingButton from "$lib/ui/FloatingButton.svelte";
+    import FloatingButton from "$lib/ui/floatingButton/FloatingButton.svelte";
 
     /** @type {import('./$types').PageData} */
     export let data;

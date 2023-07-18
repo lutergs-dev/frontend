@@ -1,6 +1,7 @@
 <script lang="ts">
     import {Seo, Space, Text, UnstyledButton} from "@svelteuidev/core";
     import {browser} from "$app/environment";
+    import {goto} from "$app/navigation";
 
     let width, height;
 
@@ -98,7 +99,7 @@
 
     const movePage = (pageName: string) => {
         if (browser) { // to prevent error window is not defined, because it's SSR
-            window.location.href = '/' + pageName;
+            goto(`/${pageName}`);
         }
     }
 </script>

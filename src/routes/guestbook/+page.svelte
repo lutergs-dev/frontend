@@ -2,7 +2,7 @@
     import {Button, Group, Paper, Seo, Space, Text, TextInput} from "@svelteuidev/core";
     import TinyMceViewer from "$lib/tinyMce/TinyMceViewer.svelte";
     import TinyMceEditor from "$lib/tinyMce/TinyMceEditor.svelte";
-    import FloatingButton from "$lib/ui/FloatingButton.svelte";
+    import FloatingButton from "$lib/ui/floatingButton/FloatingButton.svelte";
     import {Person, LockClosed} from "radix-icons-svelte";
     import ClickablePaper from "$lib/ui/ClickablePaper.svelte";
     import {PUBLIC_BACKEND_SERVER} from "$env/static/public";

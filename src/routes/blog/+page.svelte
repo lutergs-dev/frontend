@@ -13,7 +13,7 @@
         Grid, Box, Modal,
     } from '@svelteuidev/core';
     import {CrossCircled, InfoCircled} from 'radix-icons-svelte';
-    import FloatingButton from "$lib/ui/FloatingButton.svelte";
+    import FloatingButton from "$lib/ui/floatingButton/FloatingButton.svelte";
     import ClickablePaper from "$lib/ui/ClickablePaper.svelte";
     import DisappeableNotification from "$lib/ui/DisappeableNotification.svelte";
     import {goto, invalidate, invalidateAll} from "$app/navigation";
@@ -191,8 +191,8 @@
     <FloatingButton backlink={''}>
         <Paper override={{padding: "6px 6px 6px 6px"}}>
             <Group position="apart">
-                <ClickablePaper onClick={() => {movePreviousPage()}} padding={'11px 16px 11px 16px'}>◀️</ClickablePaper>
-                <ClickablePaper onClick={() => {moveNextPage()}} padding={'11px 16px 11px 16px'}>▶️</ClickablePaper>
+                <ClickablePaper onClick={() => {movePreviousPage()}} padding={"13px 14px 13px 14px"}>◀️</ClickablePaper>
+                <ClickablePaper onClick={() => {moveNextPage()}} padding={"13px 14px 13px 14px"}>▶️</ClickablePaper>
             </Group>
         </Paper>
         <Paper>

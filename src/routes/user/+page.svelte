@@ -1,14 +1,13 @@
 <script lang="ts">
 
-    import {Alert, Button, Container, Group, Loader, Modal, Paper, Seo, Space, Text, TextInput} from "@svelteuidev/core";
+    import {Alert, Button, Container, Group, Modal, Paper, Seo, Space, Text, TextInput} from "@svelteuidev/core";
     import {InfoCircled} from "radix-icons-svelte";
     import {PUBLIC_BACKEND_SERVER, PUBLIC_OAUTH_CLIENT_ID} from "$env/static/public";
-    import FloatingButton from "$lib/ui/FloatingButton.svelte";
+    import FloatingButton from "$lib/ui/floatingButton/FloatingButton.svelte";
     import ClickablePaper from "$lib/ui/ClickablePaper.svelte";
-    import {UserResponse, Email, Status} from "$lib/auth/Auth";
+    import {userStore, Email, Status} from "$lib/auth/Auth";
+    import {goto} from "$app/navigation";
 
-    export let data;
-    let userResponse: UserResponse = data.data;
 
     let newNickName = '';
     let isValidNickname: boolean;
@@ -26,8 +25,8 @@
             })
         }).then(result => {
             if (result.status === 200) {        // 정상 동작
-                // close modal (refresh page) TODO : need to use goto()
-                window.location.reload();
+                userStore.refresh();
+                goto("/user")
             } else {
                 errorOccured = true
                 if (result.status === 406) {            // 닉네임 형식이 잘못되었거나 사용중임
@@ -99,6 +98,7 @@
         {/if}
     </Modal>
 
+
     <!-- 제목 -->
     <Paper>
         <Group position="center">
@@ -109,19 +109,19 @@
     <Space h="md"></Space>
 
     <Paper>
-        {#if userResponse.status === Status.Normal}
+        {#if $userStore.status === Status.Normal}
             <Group direction="column">
                 <Container override={{ px: 0, width: "20rem", height: "3rem", display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
                     <Group position="apart" override={{ width: "20rem" }}>
-                        <Text override={{fontSize: '1rem'}} variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>닉네임 : {userResponse.userInfo.nickname}</Text>
+                        <Text override={{fontSize: '1rem'}} variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>닉네임 : {$userStore.userInfo?.nickname}</Text>
                         <Button variant='gradient' gradient={{ from: 'dark', to: 'cyan', deg: 45 }} on:click={() => {changeNickNameOpened = true; console.log(changeNickNameOpened)}}>변경</Button>
                     </Group>
                 </Container>
                 <Container override={{ px: 0, width: "20rem", height: "3rem", display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
-                    <Text override={{fontSize: '1rem'}} variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>이메일 : {Email.toPlainString(userResponse.userInfo.email)}</Text>
+                    <Text override={{fontSize: '1rem'}} variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>이메일 : {Email.toPlainString($userStore.userInfo?.email)}</Text>
                 </Container>
                 <Container override={{ px: 0, width: "20rem", height: "3rem", display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
-                    <Text override={{fontSize: '1rem'}} variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>가입일자 : {userResponse.userInfo.createdAt}</Text>
+                    <Text override={{fontSize: '1rem'}} variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>가입일자 : {$userStore.userInfo?.createdAt}</Text>
                 </Container>
                 <!-- TODO : 회원 탈퇴 기능 만들어야 함 -->
                 <!--                    <Container >-->
@@ -133,7 +133,7 @@
                 <!--                        </Group>-->
                 <!--                    </Container>-->
             </Group>
-        {:else if userResponse.status === Status.NoCredential}
+        {:else if $userStore.status === Status.NoCredential}
             <Group position="center" direction="column">
                 <Text>계정 정보가 없습니다. 아래 버튼을 눌러 구글로 로그인 혹은 회원가입 해 주세요.</Text>
                 <Text>회원가입할 경우, 최초 닉네임은 랜덤으로 생성됩니다. 변경을 권장드립니다.</Text>
@@ -146,28 +146,29 @@
                         alt="google-login-image"
                 />
             </Group>
-        {:else if userResponse.status === Status.DecryptError}
+        {:else if $userStore.status === Status.DecryptError}
             <Alert icon={InfoCircled} title="Token Validation Failed!" color="red">
                 유저 정보 해독에 실패했습니다. 로그아웃 후 재로그인해 주세요. 문제가 지속될 경우, lutergs@lutergs.dev 에게 문의해주세요.
             </Alert>
-        {:else if userResponse.status === Status.NotExists}
+        {:else if $userStore.status === Status.NotExists}
             <Alert icon={InfoCircled} title="Token Validation Failed!" color="red">
                 유저가 존재하지 않습니다. 문제가 지속될 경우, lutergs@lutergs.dev 에게 문의해주세요.
             </Alert>
-        {:else if userResponse.status === Status.BackendServerError}
-            <Alert icon={InfoCircled} title="Unknown error" color="red">
+        {:else if $userStore.status === Status.BackendServerError}
+            <Alert icon={InfoCircled} title="BackendServerError" color="red">
                 <p>알 수 없는 에러가 발생했습니다. lutergs@lutergs.dev 에게 문의해주세요.</p>
-                <p>err={userResponse.statusMessage}</p>
+                <p>err={$userStore.statusMessage}</p>
             </Alert>
-        {:else if userResponse.status === Status.UnknownError}
-            <Alert icon={InfoCircled} title="Unknown error" color="red">
+        {:else if $userStore.status === Status.UnknownError}
+            <Alert icon={InfoCircled} title="UnknownError" color="red">
                 <p>알 수 없는 에러가 발생했습니다. lutergs@lutergs.dev 에게 문의해주세요.</p>
-                <p>err={userResponse.statusMessage}</p>
+                <p>err={$userStore.statusMessage}</p>
             </Alert>
         {:else}
             <Alert icon={InfoCircled} title="Unknown error" color="red">
                 <p>알 수 없는 에러가 발생했습니다. lutergs@lutergs.dev 에게 문의해주세요.</p>
-                <p>err={userResponse.statusMessage}</p>
+                <p>err={$userStore.status}</p>
+                <p>err={$userStore.statusMessage}</p>
             </Alert>
         {/if}
     </Paper>
