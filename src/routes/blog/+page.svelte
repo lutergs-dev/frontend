@@ -28,7 +28,7 @@
     }, 2000);
     const moveToWrite = async() => {
         if (userResponse.status === Status.Normal) {
-            await goto("/write");
+            await goto("/blog/write");
         } else {
             throttleUserLogined();
         }
