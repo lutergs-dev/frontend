@@ -62,7 +62,7 @@
 <main style="background-color: #f5f5f5">
 
     <Seo
-        title="LoginTest"
+        title="User"
         titleTemplate="%t% | LuterGS"
     />
 
