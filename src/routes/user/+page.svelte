@@ -25,7 +25,8 @@
         }).then(result => {
             if (result.status === 200) {        // 정상 동작
                 userStore.refresh();
-                goto("/user")
+                changeNickNameOpened = false;
+                goto("/user");
             } else {
                 errorOccured = true
                 if (result.status === 406) {            // 닉네임 형식이 잘못되었거나 사용중임

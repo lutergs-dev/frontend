@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {Alert, Box, Group, Paper, Seo, Space, Stack, Text, Title} from "@svelteuidev/core";
+    import {Alert, Group, Paper, Seo, Space, Stack, Text, Title} from "@svelteuidev/core";
     import {InfoCircled} from "radix-icons-svelte";
     import TinyMceViewer from "$lib/tinyMce/TinyMceViewer.svelte";
     import FloatingButton from "$lib/ui/floatingButton/FloatingButton.svelte";

@@ -101,7 +101,7 @@
                 {#if width > 500}
                     {#each data.pageList as page}
                         <Box css={{display:'flex'}}>
-                            <Box css={{width:'7rem'}}>
+                            <Box css={{width:'11rem'}}>
                                 <Text override={{fontSize: '1.2rem'}} variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>
                                     {page.nickName.value}
                                 </Text>
