@@ -1,26 +1,34 @@
 import {PUBLIC_BACKEND_SERVER} from "$env/static/public";
 
 
-export const load = async({url}) => {
+export const load = async({ url }) => {
     const receivedUrl: URL = url
 
     const index = receivedUrl.searchParams.get("index") ?? "1";
     const size = receivedUrl.searchParams.get("size") ?? "10";
 
-    const result = await fetch(`${PUBLIC_BACKEND_SERVER}/page/list?` + new URLSearchParams({
+    const result = await fetch(`${PUBLIC_BACKEND_SERVER}/guestbook?` + new URLSearchParams({
         index: `${+index - 1}`,
         size: size
-    }))
+    }));
     if (result.status === 200) {
         const body = await result.json();
-        body.sort((a, b) => {
-            if (a.createdAt > b.createdAt) return -1;
-            else if (a.createdAt < b.createdAt) return 1;
-            else return 0;
-        })
         return {
             isReceived: true,
-            pageList: body, // it is array of pageKey,
+            comments: body.comments
+                .map(singleComment => {
+                    return {
+                        name: singleComment.name,
+                        password: '',
+                        value: singleComment.value,
+                        createdAt: singleComment.createdAt,
+                        deletePressed: false
+                    }
+                }).sort((a, b) => {
+                    if (a.createdAt > b.createdAt) return -1;
+                    else if (a.createdAt < b.createdAt) return 1;
+                    else return 0;
+                }),
             error: null,
             position: {
                 index: index,
@@ -36,7 +44,7 @@ export const load = async({url}) => {
         }
         return {
             isReceived: false,
-            pageList: null,
+            comments: null,
             error: body.error,
             position: {
                 index: index,
@@ -44,4 +52,5 @@ export const load = async({url}) => {
             }
         }
     }
+
 }

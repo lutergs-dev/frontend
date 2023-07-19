@@ -1,32 +1,16 @@
 <script lang="ts">
-    import {Button, Group, Paper, Seo, Space, Text, TextInput} from "@svelteuidev/core";
+    import {Alert, Button, Group, Paper, Seo, Space, Text, TextInput} from "@svelteuidev/core";
     import TinyMceViewer from "$lib/tinyMce/TinyMceViewer.svelte";
     import TinyMceEditor from "$lib/tinyMce/TinyMceEditor.svelte";
     import FloatingButton from "$lib/ui/floatingButton/FloatingButton.svelte";
-    import {Person, LockClosed} from "radix-icons-svelte";
+    import {Person, LockClosed, InfoCircled} from "radix-icons-svelte";
     import ClickablePaper from "$lib/ui/ClickablePaper.svelte";
     import {PUBLIC_BACKEND_SERVER} from "$env/static/public";
+    import AnimatedNotification from "$lib/ui/AnimatedNotification.svelte";
+    import {useThrottle} from "@svelteuidev/composables";
+    import {goto} from "$app/navigation";
 
-    const defaultPageSize = 10;
-    let currentPage = 0;
-    const loadPage = async () => {
-        fetch(`${PUBLIC_BACKEND_SERVER}/guestbook?` + new URLSearchParams({
-            index: currentPage,
-            size: defaultPageSize
-        })).then(result => result.json())
-            .then(result => {
-                comments = result.comments.map(singleComment => {
-                    return {
-                        name: singleComment.name,
-                        password: '',
-                        value: singleComment.value,
-                        createdAt: singleComment.createdAt,
-                        deletePressed: false
-                    }
-                })
-            })
-    }
-    let comments: {name: string, password: string, value: string, createdAt: string, deletePressed: string}[] = [];
+    export let data;
 
     // save and reload page
     let commentAuthor = '';
@@ -55,7 +39,7 @@
             commentAuthor = '';
             commentValue = '';
             commentPassword = '';
-            await loadPage();
+            window.location.reload();
         }else{
             alert(`Error : ${(await res.json()).error}`);
         }
@@ -78,7 +62,7 @@
             })
         })
         if (res.ok) {
-            await loadPage();
+            window.location.reload();
         }else {
             const responseBody = (await res.json());
             if (responseBody.isDeleted) {
@@ -91,28 +75,48 @@
     }
 
     // 앞 / 뒤로가기 버튼 함수
+    let isFirst = false;
+    const throttleFirstWarning = useThrottle(() => {
+        isFirst = true;
+        setTimeout(() => {
+            isFirst = false;
+        }, 1500);
+    }, 1500)
     const movePreviousPage = async () => {
-        if (currentPage === 0) {
-            alert('첫 번째 페이지입니다.')
+        if (data.position.index == 1) {
+            throttleFirstWarning();
         } else {
-            currentPage -= 1;
-            await loadPage();
-        }
-    }
-    const moveNextPage = async() => {
-        if (comments.length < defaultPageSize) {
-            alert('마지막 페이지입니다.')
-        } else {
-            currentPage += 1;
-            await loadPage();
+            await goto('/guestbook?' + new URLSearchParams({
+                index: data.position.index - 1,
+                size: data.position.size
+            }));
         }
     }
 
+    let isLast = false;
+    const throttleLastWarning = useThrottle(() => {
+        isLast = true;
+        setTimeout(() => {
+            isLast = false;
+        }, 1500);
+    }, 1500);
+
+    const moveNextPage = async() => {
+        if (data.comments.length < data.position.size) {
+            throttleLastWarning();
+        } else {
+            await goto('/guestbook?' + new URLSearchParams({
+                index: +data.position.index + 1,
+                size: data.position.size
+            }))
+        }
+    }
+
+    $: notificationBottom = width < 400 ? "25rem" : "26rem";
+    let width, height;
 </script>
 
-<main style="background-color: #f5f5f5">
-    {#await loadPage()}{/await}
-
+<main style="background-color: #f5f5f5" bind:clientWidth={width} bind:clientHeight={height}>
     <Seo
         title="Guestbook"
         titleTemplate="%t% | LuterGS"
@@ -128,31 +132,38 @@
 
     <!-- 댓글 -->
     <Paper>
-        {#each comments as comment}
-            <Paper>
-                <Group position="apart">
-                    <Text variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>{comment.name}</Text>
-                    <Text>{comment.createdAt.slice(0, 19)}</Text>
-                </Group>
-                <Space h="xs" />
-                <TinyMceViewer>{@html comment.value}</TinyMceViewer>
-                <Group position="left">
-                    {#if comment.deletePressed}
-                        <TextInput placeholder="비밀번호 입력" bind:value={comment.password}></TextInput>
-                        <Button compact variant='gradient' gradient={{ from: 'orange', to: 'dark', deg: 45 }}
-                                on:click={() => {deleteComment(comment)}}>
-                            확인
-                        </Button>
-                    {:else}
-                        <Button compact variant='gradient' gradient={{ from: 'red', to: 'gray', deg: 45 }}
-                                on:click={() => {comment.deletePressed = true}}>
-                            삭제
-                        </Button>
-                    {/if}
-                </Group>
-            </Paper>
-            <Space h="md"/>
-        {/each}
+        {#if data.isReceived}
+            {#each data.comments as comment}
+                <Paper>
+                    <Group position="apart">
+                        <Text variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>{comment.name}</Text>
+                        <Text>{comment.createdAt.slice(0, 19)}</Text>
+                    </Group>
+                    <Space h="xs" />
+                    <TinyMceViewer>{@html comment.value}</TinyMceViewer>
+                    <Group position="left">
+                        {#if comment.deletePressed}
+                            <TextInput placeholder="비밀번호 입력" bind:value={comment.password}></TextInput>
+                            <Button compact variant='gradient' gradient={{ from: 'orange', to: 'dark', deg: 45 }}
+                                    on:click={() => {deleteComment(comment)}}>
+                                확인
+                            </Button>
+                        {:else}
+                            <Button compact variant='gradient' gradient={{ from: 'red', to: 'gray', deg: 45 }}
+                                    on:click={() => {comment.deletePressed = true}}>
+                                삭제
+                            </Button>
+                        {/if}
+                    </Group>
+                </Paper>
+                <Space h="md"/>
+            {/each}
+        {:else}
+            <Alert icon={InfoCircled}  title="이런!">
+                <p>방명록 목록을 받아오는 데 실패했습니다! 재시도 해 주세요.</p>
+                <p>err : {data.error}</p>
+            </Alert>
+        {/if}
     </Paper>
     <Space h="md"/>
 
@@ -168,17 +179,38 @@
         </Group>
     </Paper>
 
+    <!-- 알림 리스트 -->
+    <AnimatedNotification
+            visible={isFirst}
+            transition={{y: "-3rem", duration: 1000}}
+            override={{backgroundColor: '#ffd699'}}
+            --bottom={notificationBottom}
+            --width="10rem"
+    >
+        첫 번째 페이지입니다.
+    </AnimatedNotification>
+
+    <AnimatedNotification
+            visible={isLast}
+            transition={{y: "-3rem", duration: 1000}}
+            override={{backgroundColor: '#ffd699'}}
+            --bottom={notificationBottom}
+            --width="10rem"
+    >
+        마지막 페이지입니다.
+    </AnimatedNotification>
+
     <!-- 플로팅 버튼에 앞 / 뒤로가기 추가 -->
     <FloatingButton backlink={''}>
         <Paper override={{padding: "6px 6px 6px 6px"}}>
             <Group position="apart">
-                <ClickablePaper onClick={movePreviousPage} padding={'11px 16px 11px 16px'}>◀️</ClickablePaper>
-                <ClickablePaper onClick={moveNextPage} padding={'11px 16px 11px 16px'}>▶️</ClickablePaper>
+                <ClickablePaper onClick={movePreviousPage} padding={"13px 10px 13px 10px"}>◀️</ClickablePaper>
+                <ClickablePaper onClick={moveNextPage} padding={"13px 10px 13px 10px"}>▶️</ClickablePaper>
             </Group>
         </Paper>
         <Paper>
             <Group position="center">
-                <Text variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>{currentPage + 1}</Text>
+                <Text variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>{data.position.index}</Text>
             </Group>
         </Paper>
     </FloatingButton>

@@ -3,7 +3,7 @@
     import {CrossCircled, InfoCircled} from 'radix-icons-svelte';
     import FloatingButton from "$lib/ui/floatingButton/FloatingButton.svelte";
     import ClickablePaper from "$lib/ui/ClickablePaper.svelte";
-    import DisappeableNotification from "$lib/ui/DisappeableNotification.svelte";
+    import AnimatedNotification from "$lib/ui/AnimatedNotification.svelte";
     import {goto} from "$app/navigation";
     import {useThrottle} from "@svelteuidev/composables";
     import {Status, UserResponse, userStore} from "$lib/auth/Auth";
@@ -15,12 +15,8 @@
     });
 
     // get page data from serve
-    const movePage = (endpoint: string) => {
-        // if (browser) { // to prevent error window is not defined, because it's SSR
-        //
-        //     window.location.href = '/blog' + endpoint;
-        // }
-        goto(`/blog${endpoint}`)
+    const movePage = async (endpoint: string) => {
+        await goto(`/blog${endpoint}`)
     }
 
     let isUserNotLogined = false;
@@ -32,7 +28,7 @@
     }, 2000);
     const moveToWrite = async() => {
         if (userResponse.status === Status.Normal) {
-            movePage("/write");
+            await goto("/write");
         } else {
             throttleUserLogined();
         }
@@ -50,7 +46,10 @@
         if (data.position.index == 1) {
             throttleFirstWarning();
         } else {
-            await goto(`/blog?index=${data.position.index - 1}&size=${data.position.size}`)
+            await goto('/blog?' + new URLSearchParams({
+                index: data.position.index - 1,
+                size: data.position.size
+            }));
         }
     }
 
@@ -65,12 +64,16 @@
         if (data.pageList.length < data.position.size) {
             throttleLastWarning();
         } else {
-            await goto(`/blog?index=${+data.position.index + 1}&size=${data.position.size}`)
+            await goto('/blog?' + new URLSearchParams({
+                index: +data.position.index + 1,
+                size: data.position.size
+            }))
         }
     }
 
 
 
+    $: notificationBottom = width < 400 ? "25rem" : "26rem";
 
     // props from CSS / HTML tag
     let width, height;
@@ -82,12 +85,15 @@
         titleTemplate="%t% | LuterGS"
     />
 
+    <!-- 제목 -->
     <Paper>
         <Group position="center">
             <Text override={{fontSize: '2rem'}} variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>글 목록</Text>
         </Group>
     </Paper>
-    <Space  h="xl"  />
+    <Space  h="md"  />
+
+    <!-- 글 목록 -->
     <Paper >
         {#if data.isReceived}
             <Stack >
@@ -152,27 +158,27 @@
         </Group>
     </Paper>
 
-    <DisappeableNotification
+    <AnimatedNotification
             visible={isFirst}
             transition={{y: "-3rem", duration: 1000}}
             override={{backgroundColor: '#ffd699'}}
-            --bottom="25rem"
+            --bottom={notificationBottom}
             --width="10rem"
     >
         첫 번째 페이지입니다.
-    </DisappeableNotification>
+    </AnimatedNotification>
 
-    <DisappeableNotification
+    <AnimatedNotification
             visible={isLast}
             transition={{y: "-3rem", duration: 1000}}
             override={{backgroundColor: '#ffd699'}}
-            --bottom="25rem"
+            --bottom={notificationBottom}
             --width="10rem"
     >
         마지막 페이지입니다.
-    </DisappeableNotification>
+    </AnimatedNotification>
 
-    <DisappeableNotification
+    <AnimatedNotification
             visible={isUserNotLogined}
             icon={CrossCircled}
             --top="1.5rem"
@@ -180,7 +186,7 @@
         <p>유저 로그인이 되어있지 않습니다!</p>
         <p><b on:click={() => {goto("/user")}}>로그인</b> 해 주세요.</p>
 
-    </DisappeableNotification>
+    </AnimatedNotification>
 
 
     <FloatingButton backlink={''}>
