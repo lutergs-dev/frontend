@@ -17,7 +17,6 @@ const config = {
 		}),
 		alias: {
 			'$util/*': 'src/lib/*',
-			"test": "src/test/test2"
 		}
 	}
 };
