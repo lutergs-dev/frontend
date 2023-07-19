@@ -1,32 +1,26 @@
 <script lang="ts">
-    import { browser } from '$app/environment';
-    import {
-        Alert,
-        Space,
-        Paper,
-        Text,
-        Button,
-        Seo,
-        Stack,
-        Divider,
-        Group,
-        Grid, Box, Modal,
-    } from '@svelteuidev/core';
+    import {Alert, Box, Button, Divider, Grid, Group, Paper, Seo, Space, Stack, Text,} from '@svelteuidev/core';
     import {CrossCircled, InfoCircled} from 'radix-icons-svelte';
     import FloatingButton from "$lib/ui/floatingButton/FloatingButton.svelte";
     import ClickablePaper from "$lib/ui/ClickablePaper.svelte";
     import DisappeableNotification from "$lib/ui/DisappeableNotification.svelte";
-    import {goto, invalidate, invalidateAll} from "$app/navigation";
+    import {goto} from "$app/navigation";
     import {useThrottle} from "@svelteuidev/composables";
-    import {getUserInfo} from "$lib/auth/Auth";
+    import {Status, UserResponse, userStore} from "$lib/auth/Auth";
 
     export let data;
+    let userResponse: UserResponse;
+    userStore.subscribe((value: UserResponse) => {
+        userResponse = value;
+    });
 
     // get page data from serve
     const movePage = (endpoint: string) => {
-        if (browser) { // to prevent error window is not defined, because it's SSR
-            window.location.href = '/blog' + endpoint;
-        }
+        // if (browser) { // to prevent error window is not defined, because it's SSR
+        //
+        //     window.location.href = '/blog' + endpoint;
+        // }
+        goto(`/blog${endpoint}`)
     }
 
     let isUserNotLogined = false;
@@ -37,8 +31,7 @@
         }, 2000);
     }, 2000);
     const moveToWrite = async() => {
-        const userInfo = await getUserInfo();
-        if (userInfo.userInfo != undefined) {
+        if (userResponse.status === Status.Normal) {
             movePage("/write");
         } else {
             throttleUserLogined();
@@ -160,11 +153,11 @@
     </Paper>
 
     <DisappeableNotification
-        visible={isFirst}
-        transition={{y: "-3rem", duration: 1000}}
-        override={{backgroundColor: '#ffd699'}}
-        --top="10rem"
-        --width="10rem"
+            visible={isFirst}
+            transition={{y: "-3rem", duration: 1000}}
+            override={{backgroundColor: '#ffd699'}}
+            --bottom="25rem"
+            --width="10rem"
     >
         첫 번째 페이지입니다.
     </DisappeableNotification>
@@ -173,7 +166,7 @@
             visible={isLast}
             transition={{y: "-3rem", duration: 1000}}
             override={{backgroundColor: '#ffd699'}}
-            --top="10rem"
+            --bottom="25rem"
             --width="10rem"
     >
         마지막 페이지입니다.
@@ -182,17 +175,19 @@
     <DisappeableNotification
             visible={isUserNotLogined}
             icon={CrossCircled}
+            --top="1.5rem"
     >
         <p>유저 로그인이 되어있지 않습니다!</p>
         <p><b on:click={() => {goto("/user")}}>로그인</b> 해 주세요.</p>
+
     </DisappeableNotification>
 
 
     <FloatingButton backlink={''}>
         <Paper override={{padding: "6px 6px 6px 6px"}}>
             <Group position="apart">
-                <ClickablePaper onClick={() => {movePreviousPage()}} padding={"13px 14px 13px 14px"}>◀️</ClickablePaper>
-                <ClickablePaper onClick={() => {moveNextPage()}} padding={"13px 14px 13px 14px"}>▶️</ClickablePaper>
+                <ClickablePaper onClick={() => {movePreviousPage()}} padding={"13px 10px 13px 10px"}>◀️</ClickablePaper>
+                <ClickablePaper onClick={() => {moveNextPage()}} padding={"13px 10px 13px 10px"}>▶️</ClickablePaper>
             </Group>
         </Paper>
         <Paper>

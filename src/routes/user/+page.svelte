@@ -4,7 +4,6 @@
     import {InfoCircled} from "radix-icons-svelte";
     import {PUBLIC_BACKEND_SERVER, PUBLIC_OAUTH_CLIENT_ID} from "$env/static/public";
     import FloatingButton from "$lib/ui/floatingButton/FloatingButton.svelte";
-    import ClickablePaper from "$lib/ui/ClickablePaper.svelte";
     import {userStore, Email, Status} from "$lib/auth/Auth";
     import {goto} from "$app/navigation";
 
@@ -56,17 +55,6 @@
         // TODO : state 용 key 를 서버에서 생성 후 검증하는 로직 필요 (defend XSS)
         // const state = encodeURI(reqResult[3]);
         window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUrl}&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&access_type=online`
-    }
-
-    const logout = (api: string) => {
-        fetch(`${PUBLIC_BACKEND_SERVER}${api}`, {credentials: 'include'})
-            .then(result => {
-                if (result.status === 200) {
-                    window.location.reload()
-                } else {
-                    alert("로그아웃 실패! 토큰이 존재하지 않습니다.")
-                }
-            })
     }
 </script>
 
@@ -173,11 +161,7 @@
         {/if}
     </Paper>
 
-    <FloatingButton backlink={''}>
-        <ClickablePaper onClick={() => {logout("/user/logout")}}>
-            <Text>👋 logout</Text>
-        </ClickablePaper>
-    </FloatingButton>
+    <FloatingButton backlink={''}/>
 </main>
 
 <style>

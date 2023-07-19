@@ -30,7 +30,8 @@
     .defaultBox {
         position: var(--position, fixed);
         right: var(--right, 1.5rem);
-        top: var(--top, 1.5rem);
+        bottom: var(--bottom, inherit);
+        top: var(--top, inherit);
         width: var(--width, 20rem);
     }
 </style>

@@ -1,6 +1,7 @@
 import {PUBLIC_BACKEND_SERVER} from "$env/static/public";
 import {writable} from "svelte/store";
-import {browser} from "$app/environment";
+
+export const authTtl = 1000 * 60 * 180;
 
 export class Email {
     readonly username: string;
@@ -67,7 +68,7 @@ export class UserResponse {
         console.log(response, this.status, this.statusMessage);
     }
 }
-export const getUserInfo = async() => {
+const getUserInfo = async() => {
     const response = await fetch(`${PUBLIC_BACKEND_SERVER}/user`, {credentials: 'include'});
     let resJson;
     try {
@@ -78,32 +79,29 @@ export const getUserInfo = async() => {
     return new UserResponse(response, resJson);
 }
 
-const getNewUserInfo = async() => {
-    if (browser) {
-        const localData = localStorage.getItem("userStore");
-        if (localData == null) return await getUserInfo();
-        else return JSON.parse(localData) as UserResponse;
-    } else {
-        return await getUserInfo();
-    }
+const requestRemoveToken = async() => {
+    const response = await fetch(`${PUBLIC_BACKEND_SERVER}/user/logout`, {credentials: 'include'})
+    return response.status === 200;
 }
 
-const UserStore = async() => {
-    const res = await getNewUserInfo();
-    if (browser) {
-        localStorage.setItem("userStore", JSON.stringify(res));
-    }
-    const { subscribe, set } = writable(res);
+const UserStore = () => {
+    const { subscribe, set } = writable(new UserResponse(undefined, undefined));
+    getUserInfo()
+        .then(userResponse => set(userResponse));
+
     return {
         subscribe,
         refresh: () => {
-            getUserInfo().then(result => {
-                if (browser) {
-                    localStorage.setItem("userStore", JSON.stringify(result));
-                }
-                set(result);
-            })
+            getUserInfo()
+                .then(userResponse => set(userResponse))
+        },
+        logout: () => {
+            requestRemoveToken()
+                .then(isSuccess => {
+                    if (isSuccess) set(new UserResponse(undefined, undefined))
+                    else alert('로그아웃 실패! 토큰이 존재하지 않습니다.')
+                })
         }
     }
 }
-export const userStore = await UserStore();
+export const userStore = UserStore();
