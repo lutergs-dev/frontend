@@ -77,7 +77,6 @@
     <Divider />
     {#each paragraphs as paragraph, i}
         <Paper>
-            {"test" + i}
             <TinyMceViewer>{@html paragraph}</TinyMceViewer>
             <Space h="md"/>
 <!--            <Button variant='outline' color="red" compact>수정</Button>-->

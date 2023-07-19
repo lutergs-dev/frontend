@@ -48,7 +48,7 @@
         toolbar: 'save cancel | restoredraft undo redo | bold italic underline strikethrough | fontfamily fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview print | image media link codesample',
         toolbar_sticky: true,
         images_upload_handler: uploadImage,
-        object_resizing: 'img',
+        object_resizing: true,
         quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
     }
     export let value = '';
@@ -63,7 +63,6 @@
     {conf}
     bind:value={value}
     apiKey={PUBLIC_TINYMCE_APIKEY}
-    images_upload_handler={uploadImage}
 />
 <!--{:catch err}-->
 <!--    <Alert icon={InfoCircled} title="이런!">-->
