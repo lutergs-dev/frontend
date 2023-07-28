@@ -22,10 +22,6 @@
     }
 
     const saveArticle = async () => {
-        console.log(JSON.stringify({
-            title: title,
-            paragraphs: paragraphs
-        }));
         const response = await fetch(`${PUBLIC_BACKEND_SERVER}/page`, {
             method: 'POST',
             credentials: 'include',

@@ -17,6 +17,12 @@ const config = {
 		}),
 		alias: {
 			'$util/*': 'src/lib/*',
+		},
+		serviceWorker: {
+			register: false
+		},
+		files: {
+			serviceWorker: 'src/service-worker.ts'
 		}
 	}
 };

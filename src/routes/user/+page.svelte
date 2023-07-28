@@ -4,9 +4,15 @@
     import {InfoCircled} from "radix-icons-svelte";
     import {PUBLIC_BACKEND_SERVER, PUBLIC_OAUTH_CLIENT_ID} from "$env/static/public";
     import FloatingButton from "$lib/ui/floatingButton/FloatingButton.svelte";
-    import {userStore, Email, Status} from "$lib/auth/Auth";
+    import {Email, Status, UserResponse, userStore} from "$lib/auth/Auth";
     import {goto} from "$app/navigation";
+    import Vim from "$lib/ui/Vim.svelte";
 
+
+    let user: UserResponse;
+    userStore.subscribe((value: UserResponse) => {
+        user = value;
+    })
 
     let newNickName = '';
     let isValidNickname: boolean;
@@ -57,6 +63,29 @@
         // const state = encodeURI(reqResult[3]);
         window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUrl}&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&access_type=online`
     }
+
+    let onEnter = async(value: string) => {
+        if (value == ":/login") {
+            // detailed login result
+            if (user.status === Status.Normal) {
+                alert("already logined!")
+            } else if (user.status === Status.NoCredential) {
+                await googleAuth("/user/signup");
+            } else {
+                alert(`Error! ${user.statusMessage}`)
+            }
+        } else if (value == ":/logout") {
+            if (user.status === Status.Normal) {
+                userStore.logout();
+            } else if (user.status === Status.NoCredential) {
+                alert("Already logouted!");
+            } else {
+                alert(`Error! ${user.statusMessage}`)
+            }
+        } else if (value == ":q") {
+            await goto("/")
+        }
+    }
 </script>
 
 
@@ -103,7 +132,7 @@
                 <Container override={{ px: 0, width: "20rem", height: "3rem", display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
                     <Group position="apart" override={{ width: "20rem" }}>
                         <Text override={{fontSize: '1rem'}} variant='gradient' weight='bold' gradient={{ from: 'dark', to: 'cyan', deg: 45 }}>닉네임 : {$userStore.userInfo?.nickname}</Text>
-                        <Button variant='gradient' gradient={{ from: 'dark', to: 'cyan', deg: 45 }} on:click={() => {changeNickNameOpened = true; console.log(changeNickNameOpened)}}>변경</Button>
+                        <Button variant='gradient' gradient={{ from: 'dark', to: 'cyan', deg: 45 }} on:click={() => {changeNickNameOpened = true;}}>변경</Button>
                     </Group>
                 </Container>
                 <Container override={{ px: 0, width: "20rem", height: "3rem", display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
@@ -163,6 +192,7 @@
     </Paper>
 
     <FloatingButton backlink={''}/>
+    <Vim onEnter={onEnter}/>
 </main>
 
 <style>

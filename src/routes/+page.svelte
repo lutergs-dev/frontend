@@ -2,6 +2,7 @@
     import {Seo, Space, Text, UnstyledButton} from "@svelteuidev/core";
     import {browser} from "$app/environment";
     import {goto} from "$app/navigation";
+    import Vim from "$lib/ui/Vim.svelte";
 
     let width, height;
 
@@ -100,6 +101,20 @@
     const movePage = (pageName: string) => {
         if (browser) { // to prevent error window is not defined, because it's SSR
             goto(`/${pageName}`);
+        }
+    }
+
+    let onEnter = (value: string) => {
+        if (value == ":/about") {
+            goto("/about")
+        } else if (value == ":/blog") {
+            goto("/blog")
+        } else if (value == ":/eugene") {
+            goto("/eugene")
+        } else if (value == ":/user") {
+            goto("/user")
+        } else if (value == ":/guestbook") {
+            goto("/guestbook")
         }
     }
 </script>
@@ -216,8 +231,7 @@
         {/if}
     </div>
 
-
-
+    <Vim onEnter={onEnter} />
 </body>
 
 
@@ -395,4 +409,5 @@
             rotate(-378deg);
         }
     }
+
 </style>

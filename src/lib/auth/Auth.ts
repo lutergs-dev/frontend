@@ -65,7 +65,6 @@ export class UserResponse {
             this.status = Status.UnknownError;
             this.statusMessage = "unknown error!";
         }
-        console.log(response, this.status, this.statusMessage);
     }
 }
 const getUserInfo = async() => {
