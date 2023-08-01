@@ -11,10 +11,6 @@
         isVimVisible = false;
         command = ':';
     }
-
-    // export let onEnter = (value: string) => {
-    //
-    // }
     export let onEnter;
 </script>
 
@@ -22,7 +18,16 @@
 {#if isVimVisible}
     <div class="vim">
         <Paper>
-            <TextInput use={[[focus]]} bind:value={command} on:keydown={getHotkeyHandler([['Enter', () => {onEnter(command); closeVim();}], ['Escape', () => closeVim()]])}></TextInput>
+            <TextInput
+                use={[[focus]]}
+                bind:value={command}
+                on:keydown={getHotkeyHandler(
+                    [
+                        ['Enter', () => {onEnter(command); closeVim();}],
+                        ['Escape', () => closeVim()]
+                    ]
+                )}>
+            </TextInput>
         </Paper>
     </div>
 {/if}

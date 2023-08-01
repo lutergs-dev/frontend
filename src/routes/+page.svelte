@@ -104,7 +104,7 @@
         }
     }
 
-    let onEnter = (value: string) => {
+    const onEnter = (value: string) => {
         if (value == ":/about") {
             goto("/about")
         } else if (value == ":/blog") {
