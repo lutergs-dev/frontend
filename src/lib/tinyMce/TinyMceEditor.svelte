@@ -10,13 +10,6 @@
             .then(jsonResult => jsonResult.url)
     }
 
-    const test2 = (blobInfo, progress) => new Promise((resolve, reject) => {
-
-        fetch(`${PUBLIC_BACKEND_SERVER}/`)
-
-        blobInfo.fileName()
-    })
-
     const uploadImage = (blobInfo, progress) => new Promise((resolve, reject) => {
         progress(50);
         getPresignedUrl(blobInfo.filename())
@@ -25,7 +18,8 @@
                     method: "PUT",
                     headers: {
                         "Content-Length": blobInfo.blob().size,
-                        "Content-Type": "binary/octet-stream"
+                        "Content-Type": "application/octet-stream",
+                        "x-amz-acl": "public-read"
                     },
                     body: blobInfo.blob()
                 })
@@ -34,6 +28,7 @@
                         resolve(`${resultUrl.protocol}//${resultUrl.hostname}${resultUrl.pathname}`)
                     })
                     .catch(err => {
+                        console.log(err)
                         reject(err)
                     })
             })
