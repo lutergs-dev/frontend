@@ -4,6 +4,12 @@ FROM node:20 AS builder
 RUN mkdir /lutergs-frontend
 COPY . /lutergs-frontend
 
+# set ENV
+ENV PUBLIC_TINYMCE_APIKEY=1 \
+    PUBLIC_BACKEND_SERVER=2 \
+    PUBLIC_OAUTH_CLIENT_ID=3
+
+
 # build docker image
 WORKDIR /lutergs-frontend
 RUN npm install
