@@ -34,14 +34,14 @@
         const json = await response.json();
         const result = {
             isSuccess: false,
-            link: null,
-            error: null
+            link: "",
+            error: ""
         }
         if (response.status === 200) {
             result.isSuccess = true
             result.link = json.pageKey.endpoint.value;
         } else {
-            result.error = json.error;
+            result.error = JSON.stringify(json);
         }
         if (browser) {
             if (result.isSuccess) {
