@@ -17,5 +17,5 @@ COPY --from=builder /lutergs-frontend/package-lock.json package-lock.json
 COPY --from=builder /lutergs-frontend/build build
 
 RUN npm ci --omit dev
-ENTRYPOINT ["node", "build"]
+ENTRYPOINT ["HOST=$HOST", "PORT=$PORT", "node", "build"]
 
