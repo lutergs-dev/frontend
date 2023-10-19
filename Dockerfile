@@ -6,6 +6,7 @@ COPY . /lutergs-frontend
 
 # build docker image
 WORKDIR /lutergs-frontend
+RUN npm install
 RUN npm run build
 
 FROM node:20
