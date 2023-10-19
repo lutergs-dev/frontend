@@ -5,7 +5,7 @@
     import FloatingButton from "$lib/ui/floatingButton/FloatingButton.svelte";
     import {Person, LockClosed, InfoCircled} from "radix-icons-svelte";
     import ClickablePaper from "$lib/ui/ClickablePaper.svelte";
-    import {PUBLIC_BACKEND_SERVER} from "$env/static/public";
+    import { env } from "$env/dynamic/public";
     import AnimatedNotification from "$lib/ui/AnimatedNotification.svelte";
     import {useThrottle} from "@svelteuidev/composables";
     import {goto} from "$app/navigation";
@@ -26,7 +26,7 @@
             return;
         }
 
-        const res = await fetch(`${PUBLIC_BACKEND_SERVER}/guestbook`, {
+        const res = await fetch(`${env.PUBLIC_BACKEND_SERVER}/guestbook`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
@@ -52,7 +52,7 @@
         createdAt: string,
         deletePressed: boolean
     }) => {
-        const res = await fetch(`${PUBLIC_BACKEND_SERVER}/guestbook`, {
+        const res = await fetch(`${env.PUBLIC_BACKEND_SERVER}/guestbook`, {
             method: "DELETE",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({

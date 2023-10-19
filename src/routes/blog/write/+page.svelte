@@ -4,7 +4,7 @@
     import TinyMceEditor from "../../../lib/tinyMce/TinyMceEditor.svelte";
     import {Pencil1} from "radix-icons-svelte";
     import {browser} from "$app/environment";
-    import {PUBLIC_BACKEND_SERVER} from "$env/static/public";
+    import { env } from "$env/dynamic/public";
 
     let title = '';
     let paragraphs: string[] = [];
@@ -22,7 +22,7 @@
     }
 
     const saveArticle = async () => {
-        const response = await fetch(`${PUBLIC_BACKEND_SERVER}/page`, {
+        const response = await fetch(`${env.PUBLIC_BACKEND_SERVER}/page`, {
             method: 'POST',
             credentials: 'include',
             headers: {"Content-Type": "Application/Json"},

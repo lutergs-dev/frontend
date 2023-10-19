@@ -1,9 +1,9 @@
 <script lang="ts">
     import Editor from "@tinymce/tinymce-svelte";
-    import {PUBLIC_BACKEND_SERVER, PUBLIC_TINYMCE_APIKEY} from "$env/static/public";
+    import { env } from "$env/dynamic/public";
 
     const getPresignedUrl = async (fileName: string) => {
-        return await fetch(`${PUBLIC_BACKEND_SERVER}/image?` + new URLSearchParams({
+        return await fetch(`${env.PUBLIC_BACKEND_SERVER}/image?` + new URLSearchParams({
             name: fileName
         }), { method: "GET" })
             .then(result => result.json())
@@ -57,7 +57,7 @@
 <Editor
     {conf}
     bind:value={value}
-    apiKey={PUBLIC_TINYMCE_APIKEY}
+    apiKey={env.PUBLIC_TINYMCE_APIKEY}
 />
 <!--{:catch err}-->
 <!--    <Alert icon={InfoCircled} title="이런!">-->

@@ -1,4 +1,4 @@
-import {PUBLIC_BACKEND_SERVER} from "$env/static/public";
+import { env } from "$env/dynamic/public";
 import {writable} from "svelte/store";
 
 export const authTtl = 1000 * 60 * 180;
@@ -68,7 +68,7 @@ export class UserResponse {
     }
 }
 const getUserInfo = async() => {
-    const response = await fetch(`${PUBLIC_BACKEND_SERVER}/user`, {credentials: 'include'});
+    const response = await fetch(`${env.PUBLIC_BACKEND_SERVER}/user`, {credentials: 'include'});
     let resJson;
     try {
         resJson = await response.json();
@@ -79,7 +79,7 @@ const getUserInfo = async() => {
 }
 
 const requestRemoveToken = async() => {
-    const response = await fetch(`${PUBLIC_BACKEND_SERVER}/user/logout`, {credentials: 'include'})
+    const response = await fetch(`${env.PUBLIC_BACKEND_SERVER}/user/logout`, {credentials: 'include'})
     return response.status === 200;
 }
 

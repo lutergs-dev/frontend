@@ -1,9 +1,9 @@
-import {PUBLIC_BACKEND_SERVER} from "$env/static/public";
+import { env } from "$env/dynamic/public";
 
 
 /** @type {import('./$types').PageServerLoad} */
 export const load = async({ params }) => {
-    const result = await fetch(`${PUBLIC_BACKEND_SERVER}/page/` + params.slug)
+    const result = await fetch(`${env.PUBLIC_BACKEND_SERVER}/page/` + params.slug)
     const body = await result.json();
     if (result.status === 200) {
         return {

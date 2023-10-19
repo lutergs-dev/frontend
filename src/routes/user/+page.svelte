@@ -2,7 +2,7 @@
 
     import {Alert, Button, Container, Group, Modal, Paper, Seo, Space, Text, TextInput} from "@svelteuidev/core";
     import {InfoCircled} from "radix-icons-svelte";
-    import {PUBLIC_BACKEND_SERVER, PUBLIC_OAUTH_CLIENT_ID} from "$env/static/public";
+    import { env } from "$env/dynamic/public";
     import FloatingButton from "$lib/ui/floatingButton/FloatingButton.svelte";
     import {Email, Status, UserResponse, userStore} from "$lib/auth/Auth";
     import {goto} from "$app/navigation";
@@ -21,7 +21,7 @@
     let errorMessage = ''
     $: { isValidNickname = /^[A-Za-z0-9\-_'.]+$/.test(newNickName); }
     const setNickName = async() => {
-        fetch(`${PUBLIC_BACKEND_SERVER}/user`, {
+        fetch(`${env.PUBLIC_BACKEND_SERVER}/user`, {
             method: 'POST',
             credentials: 'include',
             headers: {"Content-Type": "Application/Json"},
@@ -57,8 +57,8 @@
     }
 
     const googleAuth = async(api: string) => {
-        const clientId = encodeURI(PUBLIC_OAUTH_CLIENT_ID);
-        const redirectUrl = encodeURI(`${PUBLIC_BACKEND_SERVER}${api}`);
+        const clientId = encodeURI(env.PUBLIC_OAUTH_CLIENT_ID);
+        const redirectUrl = encodeURI(`${env.PUBLIC_BACKEND_SERVER}${api}`);
         // TODO : state 용 key 를 서버에서 생성 후 검증하는 로직 필요 (defend XSS)
         // const state = encodeURI(reqResult[3]);
         window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUrl}&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&access_type=online`
