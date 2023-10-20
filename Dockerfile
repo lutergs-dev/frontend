@@ -1,4 +1,4 @@
-FROM arm64v8/node:20 AS builder
+FROM node:20 AS builder
 
 # move files to docker builder
 RUN mkdir /lutergs-frontend
@@ -9,7 +9,7 @@ WORKDIR /lutergs-frontend
 RUN npm install
 RUN npm run build
 
-FROM arm64v8/node:20
+FROM node:20
 
 WORKDIR /
 COPY --from=builder /lutergs-frontend/package.json package.json
