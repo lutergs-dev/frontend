@@ -4,6 +4,7 @@
     import TinyMceViewer from "$lib/tinyMce/TinyMceViewer.svelte";
     import FloatingButton from "$lib/ui/floatingButton/FloatingButton.svelte";
     import {goto} from "$app/navigation";
+    import Vim from "$lib/ui/Vim.svelte";
 
     /** @type {import('./$types').PageData} */
     export let data;
@@ -69,4 +70,5 @@
     {/if}
 
     <FloatingButton backlink={'blog'}/>
+    <Vim onEnter={onEnter}/>
 </main>
