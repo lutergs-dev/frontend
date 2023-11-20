@@ -94,7 +94,7 @@
         } else if (value.substring(0, 2) == ":/") {
             let pageNumber = +value.substring(2);
             if (pageNumber > 0 && pageNumber <= data.pageList.length) {
-                await movePage(data.pageList[pageNumber - 1].endpoint.value)
+                await movePage(`/${data.pageList[pageNumber - 1].endpoint.value}`)
             } else {
                 alert(`Not valid page list. enter value between 1 and ${data.pageList.length}`);
             }
