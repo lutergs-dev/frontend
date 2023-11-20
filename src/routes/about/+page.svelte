@@ -2,6 +2,19 @@
     import TinyMceViewer from "$lib/tinyMce/TinyMceViewer.svelte";
     import {Paper} from "@svelteuidev/core";
     import FloatingButton from "$lib/ui/floatingButton/FloatingButton.svelte";
+    import {goto} from "$app/navigation";
+    import Vim from "$lib/ui/Vim.svelte";
+
+    const onEnter = async(value: string) => {
+        if (value == ":q" || value == ":q!") {
+            await goto("/");
+        } else if (value == ":/help") {
+            const helpMessage = "Below commands are available\n" +
+                `":q" or ":q!" : go back to main page\n` +
+                `":/help" : show this help message`
+            alert(helpMessage);
+        }
+    }
 </script>
 
 <Paper>
@@ -42,7 +55,8 @@
             </ul>
             </li>
             <li>백엔드 개발자 (<a href="https://kt.com">KT</a>) : 2023.01 ~<ul>
-                <li><code>(2023.02 ~ 2023.07)</code> KT 환경플랫폼 데이터 파이프라인 v2 개발 리드 ( Kafka-based MSA with Java SpringBoot / Container-based develop env with k8s, containerd / Observability by Grafana stack / CI/CD with Jenkins/Nexus )</li>
+                <li><code>(2023.02 ~ 2023.09)</code> KT 환경플랫폼 데이터 파이프라인 v2 개발 리드 ( Kafka-based MSA with Java SpringBoot / Container-based develop env with k8s, containerd / Observability by Grafana stack / CI/CD with Jenkins/Nexus )</li>
+                <li><code>(2023.09 ~ now )</code> KT IoT 기기의 이상탐지 및 제어기능 (위험제어, 이상탐지) 개발 </li>
             </ul>
             </li>
         </ul>
@@ -65,4 +79,5 @@
     </TinyMceViewer>
 
     <FloatingButton backlink={''}/>
+    <Vim onEnter={onEnter} />
 </Paper>

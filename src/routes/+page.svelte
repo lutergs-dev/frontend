@@ -104,17 +104,26 @@
         }
     }
 
-    const onEnter = (value: string) => {
+    const onEnter = async(value: string) => {
         if (value == ":/about") {
-            goto("/about")
+            await goto("/about")
         } else if (value == ":/blog") {
-            goto("/blog")
+            await goto("/blog")
         } else if (value == ":/eugene") {
-            goto("/eugene")
+            await goto("/eugene")
         } else if (value == ":/user") {
-            goto("/user")
+            await goto("/user")
         } else if (value == ":/guestbook") {
-            goto("/guestbook")
+            await goto("/guestbook")
+        } else if (value == ":/help") {
+            const helpMessage = "Below commands are available\n" +
+                `":/about" : go to about page\n` +
+                `":/blog" : go to blog page\n` +
+                `":/eugene" : go to eugene page\n` +
+                `":/user" : go to user page\n` +
+                `":/guestbook" : go to guestbook page\n` +
+                `":/help" : show this help message`
+            alert(helpMessage);
         }
     }
 </script>

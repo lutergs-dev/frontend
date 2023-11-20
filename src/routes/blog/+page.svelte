@@ -7,6 +7,7 @@
     import {goto} from "$app/navigation";
     import {useThrottle} from "@svelteuidev/composables";
     import {Status, UserResponse, userStore} from "$lib/auth/Auth";
+    import Vim from "$lib/ui/Vim.svelte";
 
     export let data;
     let userResponse: UserResponse;
@@ -43,11 +44,11 @@
         }, 1500);
     }, 1500);
     const movePreviousPage = async() => {
-        if (data.position.index == 1) {
+        if (+data.position.index == 1) {
             throttleFirstWarning();
         } else {
             await goto('/blog?' + new URLSearchParams({
-                index: data.position.index - 1,
+                index: String(+data.position.index - 1),
                 size: data.position.size
             }));
         }
@@ -65,7 +66,7 @@
             throttleLastWarning();
         } else {
             await goto('/blog?' + new URLSearchParams({
-                index: +data.position.index + 1,
+                index: String(+data.position.index + 1),
                 size: data.position.size
             }))
         }
@@ -76,7 +77,29 @@
     $: notificationBottom = width < 400 ? "25rem" : "26rem";
 
     // props from CSS / HTML tag
-    let width, height;
+    let width: number, height: number;
+
+    const onEnter = async(value: string) => {
+        if (value == ":/write") {
+            await moveToWrite();
+        } else if (value == ":q" || value == ":q!") {
+            await goto("/");
+        } else if (value == ":/help") {
+            const helpMessage = "Below commands are available\n" +
+                `":q" or ":q!" : go back to main page\n` +
+                `":/[number]" : go to [number] page. Number page is between 1 and ${data.pageList.length}\n` +
+                `":/write" : write article. Error occurs if no user info is available\n` +
+                `":/help" : show this help message`
+            alert(helpMessage);
+        } else if (value.substring(0, 2) == ":/") {
+            let pageNumber = +value.substring(2);
+            if (pageNumber > 0 && pageNumber <= data.pageList.length) {
+                await movePage(data.pageList[pageNumber - 1].endpoint.value)
+            } else {
+                alert(`Not valid page list. enter value between 1 and ${data.pageList.length}`);
+            }
+        }
+    }
 </script>
 
 <main style="background-color: #f5f5f5" bind:clientWidth={width} bind:clientHeight={height}>
@@ -202,4 +225,5 @@
             </Group>
         </Paper>
     </FloatingButton>
+    <Vim onEnter={onEnter}/>
 </main>

@@ -3,6 +3,7 @@
     import {InfoCircled} from "radix-icons-svelte";
     import TinyMceViewer from "$lib/tinyMce/TinyMceViewer.svelte";
     import FloatingButton from "$lib/ui/floatingButton/FloatingButton.svelte";
+    import {goto} from "$app/navigation";
 
     /** @type {import('./$types').PageData} */
     export let data;
@@ -11,6 +12,20 @@
     const createdAtString = () => {
         const raw = data.pageKey.createdAt;
         return `${raw.slice(0, 4)}년 ${raw.slice(5, 7)}월 ${raw.slice(8, 10)}일, ${raw.slice(11, 13)}시 ${raw.slice(14, 16)}분`
+    }
+
+    const onEnter = async(value: string) => {
+        if (value == ":q") {
+            await goto("/blog");
+        } else if (value == ":q!") {
+            await goto("/");
+        } else if (value == ":/help") {
+            const helpMessage = "Below commands are available\n" +
+                `":q" : go back to blog article list page\n` +
+                `":q!" : go back to main page\n` +
+                `":/help" : show this help message`
+            alert(helpMessage);
+        }
     }
 
 </script>

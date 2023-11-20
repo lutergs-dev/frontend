@@ -82,8 +82,15 @@
             } else {
                 alert(`Error! ${user.statusMessage}`)
             }
-        } else if (value == ":q") {
+        } else if (value == ":q" || value == ":q!") {
             await goto("/")
+        } else if (value == ":/help") {
+            const helpMessage = "Below commands are available\n" +
+                `":/login" : login to site. Signup if provided Google auth is not valid.\n` +
+                `":/logout" : logout from site\n` +
+                `":q" or ":q!" : go back to main page\n` +
+                `":/help" : show this help message`
+            alert(helpMessage);
         }
     }
 </script>
