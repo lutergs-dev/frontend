@@ -40,7 +40,7 @@
     // TinyMCE configuration
     const conf = {
         plugins: 'save preview searchreplace autolink autosave directionality code visualblocks visualchars fullscreen image link media template codesample table charmap pagebreak nonbreaking insertdatetime advlist lists wordcount help charmap quickbars emoticons',
-        toolbar: 'save cancel | restoredraft undo redo | bold italic underline strikethrough | fontfamily fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview print | image media link codesample',
+        toolbar: 'save cancel | restoredraft undo redo | bold italic underline strikethrough blockquote | fontfamily fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview print | image media link codesample',
         toolbar_sticky: true,
         images_upload_handler: uploadImage,
         object_resizing: true,

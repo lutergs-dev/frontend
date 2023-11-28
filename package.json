@@ -1,6 +1,6 @@
 {
 	"name": "lutergs-frontend-svelte4",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"private": true,
 	"scripts": {
 		"dev local": "vite dev --port=5173 --host",

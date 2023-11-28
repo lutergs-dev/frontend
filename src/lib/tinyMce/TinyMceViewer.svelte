@@ -66,13 +66,13 @@
       padding: 0.1rem 0.2rem;
     }
 
-    :global(.mce-content-body:not([dir=rtl]) blockquote) {
+    :global(blockquote:not([dir=rtl]) ) {
       border-left: 2px solid #ccc;
       margin-left: 1.5rem;
       padding-left: 1rem;
     }
 
-    :global(.mce-content-body[dir=rtl] blockquote) {
+    :global(blockquote[dir=rtl]) {
       border-right: 2px solid #ccc;
       margin-right: 1.5rem;
       padding-right: 1rem;
