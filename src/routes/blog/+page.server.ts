@@ -7,7 +7,7 @@ export const load = async({url}) => {
     const index = receivedUrl.searchParams.get("index") ?? "1";
     const size = receivedUrl.searchParams.get("size") ?? "10";
 
-    const result = await fetch(`${env.PUBLIC_BACKEND_SERVER}/page/list?` + new URLSearchParams({
+    const result = await fetch(`${env.PUBLIC_BACKEND_SERVER}/pages?` + new URLSearchParams({
         index: `${+index - 1}`,
         size: size
     }))

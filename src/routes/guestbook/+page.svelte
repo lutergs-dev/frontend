@@ -17,6 +17,7 @@
     let commentValue = '';
     let commentPassword = '';
     const addComment = async () => {
+        window.onbeforeunload = () => {}
         if (commentAuthor === '') {
             alert("Error : 이름이 비어있습니다.");
             return;
@@ -39,7 +40,7 @@
             commentAuthor = '';
             commentValue = '';
             commentPassword = '';
-            window.location.reload();
+            window.location.reload();       // goto 로 페이지가 새로고침되지 않음.
         }else{
             alert(`Error : ${(await res.json()).error}`);
         }
@@ -50,27 +51,28 @@
         password: string,
         value: string,
         createdAt: string,
+        uuid: string,
         deletePressed: boolean
     }) => {
-        const res = await fetch(`${env.PUBLIC_BACKEND_SERVER}/guestbook`, {
+        console.log(comment);
+        const res = await fetch(`${env.PUBLIC_BACKEND_SERVER}/guestbook/${comment.uuid}`, {
             method: "DELETE",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-                "name": comment.name,
-                "createdAt": comment.createdAt,
-                "password": comment.password
-            })
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": comment.password
+            }
         })
         if (res.ok) {
             window.location.reload();
         }else {
-            const responseBody = (await res.json());
-            if (responseBody.isDeleted) {
-                alert(`Error : 삭제에 실패했습니다.\nlutergs@lutergs.dev 에게 문의해주세요.`)
-            } else {
-                alert(`Error : 삭제 상태에 에러가 발생했습니다.\nlutergs@lutergs.dev 에게 문의해주세요.\nerr : ${responseBody}`)
-            }
-            comment.deletePressed = false;
+            res.json().then(json => {
+                if (json.error == "wrong password") {
+                    alert(`Error : 잘못된 패스워드입니다.`);
+                } else {
+                    alert(`Error : 삭제에 실패했습니다. ${json.error}\nlutergs@lutergs.dev 에게 문의해주세요.`)
+                }
+                comment.deletePressed = false;
+            })
         }
     }
 

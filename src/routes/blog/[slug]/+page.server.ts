@@ -3,7 +3,7 @@ import { env } from "$env/dynamic/public";
 
 /** @type {import('./$types').PageServerLoad} */
 export const load = async({ params }) => {
-    const result = await fetch(`${env.PUBLIC_BACKEND_SERVER}/page/` + params.slug)
+    const result = await fetch(`${env.PUBLIC_BACKEND_SERVER}/pages/` + params.slug)
     const body = await result.json();
     if (result.status === 200) {
         return {

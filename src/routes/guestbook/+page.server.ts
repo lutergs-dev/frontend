@@ -1,6 +1,5 @@
 import { env } from "$env/dynamic/public";
 
-
 export const load = async({ url }) => {
     const receivedUrl: URL = url
 
@@ -15,13 +14,14 @@ export const load = async({ url }) => {
         const body = await result.json();
         return {
             isReceived: true,
-            comments: body.comments
+            comments: body
                 .map(singleComment => {
                     return {
                         name: singleComment.name,
                         password: '',
                         value: singleComment.value,
                         createdAt: singleComment.createdAt,
+                        uuid: singleComment.uuid,
                         deletePressed: false
                     }
                 }).sort((a, b) => {

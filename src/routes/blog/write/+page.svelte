@@ -5,6 +5,7 @@
     import {Pencil1} from "radix-icons-svelte";
     import {browser} from "$app/environment";
     import { env } from "$env/dynamic/public";
+    import {goto} from "$app/navigation";
 
     let title = '';
     let paragraphs: string[] = [];
@@ -22,7 +23,7 @@
     }
 
     const saveArticle = async () => {
-        const response = await fetch(`${env.PUBLIC_BACKEND_SERVER}/page`, {
+        const response = await fetch(`${env.PUBLIC_BACKEND_SERVER}/pages`, {
             method: 'POST',
             credentials: 'include',
             headers: {"Content-Type": "Application/Json"},
@@ -44,10 +45,12 @@
             result.error = JSON.stringify(json);
         }
         if (browser) {
+            // window.onbeforeunload = () => {}
             if (result.isSuccess) {
                 alert(`저장이 완료되었습니다! 확인을 누르면 저장한 글로 이동합니다.`);
-                window.location.href = `/blog/${result.link}`;
+                await goto(`/blog/${result.link}`)
             } else {
+                // window.onbeforeunload = () => {}
                 alert(`저장에 실패했습니다!\nerr : ${result.error}`);
             }
         }
