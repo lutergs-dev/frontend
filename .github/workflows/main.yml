@@ -2,10 +2,10 @@ name: Build and Deploy
 
 on:
   push:
-    branches: ["main"]
+    branches: ['main']
 
 env:
-  ENVS: "envs"
+  ENVS: 'envs'
 
 # for AWS credentials and k8s setting
 permissions:
